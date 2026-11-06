@@ -20,7 +20,7 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
    "filename": "rato-falando 1",
@@ -42,7 +42,7 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
    "filename": "rato-falando 2",
@@ -64,7 +64,7 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
    "filename": "rato-falando 3",
@@ -86,13 +86,13 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
    "filename": "rato-falando 4",
    "frame": {
-    "x": 0,
-    "y": 48,
+    "x": 192,
+    "y": 0,
     "w": 48,
     "h": 48
    },
@@ -108,12 +108,12 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
    "filename": "rato-falando 5",
    "frame": {
-    "x": 48,
+    "x": 0,
     "y": 48,
     "w": 48,
     "h": 48
@@ -130,11 +130,33 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
    "filename": "rato-falando 6",
    "frame": {
+    "x": 48,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-falando 7",
+   "frame": {
     "x": 96,
     "y": 48,
     "w": 48,
@@ -152,10 +174,10 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
-   "filename": "rato-falando 7",
+   "filename": "rato-falando 8",
    "frame": {
     "x": 144,
     "y": 48,
@@ -174,10 +196,32 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
-   "filename": "rato-falando 8",
+   "filename": "rato-falando 9",
+   "frame": {
+    "x": 192,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-falando 10",
    "frame": {
     "x": 0,
     "y": 96,
@@ -196,10 +240,10 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
-   "filename": "rato-falando 9",
+   "filename": "rato-falando 11",
    "frame": {
     "x": 48,
     "y": 96,
@@ -218,10 +262,10 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
-   "filename": "rato-falando 10",
+   "filename": "rato-falando 12",
    "frame": {
     "x": 96,
     "y": 96,
@@ -240,10 +284,10 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
   },
   {
-   "filename": "rato-falando 11",
+   "filename": "rato-falando 13",
    "frame": {
     "x": 144,
     "y": 96,
@@ -262,7 +306,95 @@
     "w": 48,
     "h": 48
    },
-   "duration": 100
+   "duration": 67
+  },
+  {
+   "filename": "rato-falando 14",
+   "frame": {
+    "x": 192,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-falando 15",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-falando 16",
+   "frame": {
+    "x": 48,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-falando 17",
+   "frame": {
+    "x": 96,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
   }
  ],
  "meta": {
@@ -271,24 +403,24 @@
   "image": "rato-falando.png",
   "format": "RGBA8888",
   "size": {
-   "w": 192,
-   "h": 144
+   "w": 240,
+   "h": 192
   },
   "scale": "1",
   "frameTags": [
    {
     "name": "rato-falando",
     "from": 0,
-    "to": 11,
+    "to": 17,
     "direction": "forward"
    }
   ],
   "pixelfx": {
    "id": "critters/rato-falando",
    "name": "Rato falando",
-   "fps": 10,
+   "fps": 15,
    "loop": true,
-   "frames": 12,
+   "frames": 18,
    "frameSize": [
     48,
     48
@@ -297,7 +429,7 @@
     24,
     44
    ],
-   "columns": 4
+   "columns": 5
   }
  }
 }

@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-empacotar/
 venv/
 .pytest_cache/
 .coverage

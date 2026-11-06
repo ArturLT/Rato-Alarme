@@ -1,4 +1,4 @@
-"""Ícone na bandeja: mostra o estado do alarme, cuida da versão nova e encerra tudo."""
+"""Ícone na bandeja: mostra o estado do alarme, avisa de versão nova e encerra tudo."""
 
 import platform
 import shutil
@@ -6,15 +6,14 @@ import subprocess
 import sys
 import threading
 import webbrowser
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from PySide6.QtCore import QObject, QTimer, Signal
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
-from alarma import atualizacao, config, instalacao, travessuras
-from alarma.aviso import Aviso
+from alarma import atualizacao, config, travessuras
 from alarma.logica import decidir, pendente, resumir
 from alarma.painel import Painel
 from alarma.registro import DISPARADO, PEGO, Registro, caminho_mudo, caminho_padrao
@@ -24,7 +23,6 @@ ICONES = Path(__file__).parent / "icones"
 ATUALIZAR_MS = 5_000
 PRIMEIRA_BUSCA_MS = 30_000
 NOVA_BUSCA_MS = 6 * 60 * 60 * 1000
-ESPERA_DO_SCRIPT_MS = 3 * 60 * 1000
 
 
 def atualiza_sozinho() -> bool:
@@ -38,19 +36,12 @@ def atualiza_sozinho() -> bool:
 
 class Bandeja(QObject):
     _achou = Signal(object)
-    _progresso = Signal(int)
-    _baixado = Signal(object)
-    _falhou = Signal()
 
-    def __init__(self, painel: Painel) -> None:
+    def __init__(self, painel: Painel, pet=None) -> None:
         super().__init__()
         self._painel = painel
+        self._pet = pet
         self._lancamento: atualizacao.Lancamento | None = None
-        self._instalando = False
-        atualizacao.limpar()
-        self._aviso = Aviso()
-        self._aviso.atualizar.connect(self._instalar)
-        self._aviso.abrir_site.connect(self._abrir_site)
         self._calmo = QIcon(str(ICONES / "rato-alarme.png"))
         self._solto = QIcon(str(ICONES / "rato-alarme-solto.png"))
 
@@ -65,8 +56,24 @@ class Bandeja(QObject):
         sair = QAction("Sair", self._menu)
         sair.triggered.connect(self._sair)
         self._menu.addAction(self._estado)
+        self._estado_pet = QAction(self._menu)
+        self._estado_pet.setEnabled(False)
+        self._menu.addAction(self._estado_pet)
         self._menu.addSeparator()
         self._menu.addAction(self._atualizar_app)
+        self._dormir = QAction("💤 Pôr o rato para dormir (1 hora)", self._menu)
+        self._dormir.triggered.connect(self._alternar_sono)
+        if pet is not None:
+            chamar = QAction("Chamar o rato", self._menu)
+            chamar.triggered.connect(pet.chamar)
+            queijo = QAction("🧀 Dar queijo", self._menu)
+            queijo.triggered.connect(pet.dar_queijo)
+            self._menu.addAction(chamar)
+            self._menu.addAction(queijo)
+            self._menu.addAction(self._dormir)
+            self._menu.addSeparator()
+        else:
+            self._estado_pet.setVisible(False)
         self._menu.addAction(abrir)
         self._menu.addAction(sair)
 
@@ -76,9 +83,6 @@ class Bandeja(QObject):
         self._icone.show()
 
         self._achou.connect(self._mostrar_lancamento)
-        self._progresso.connect(self._aviso.progresso)
-        self._baixado.connect(self._trocar_app)
-        self._falhou.connect(self._nao_atualizou)
         self._atualizar()
         self._relogio = QTimer(self, interval=ATUALIZAR_MS)
         self._relogio.timeout.connect(self._atualizar)
@@ -104,8 +108,23 @@ class Bandeja(QObject):
         solto = pendente(decisao, preferencias.alarme_ligado, pego, disparado)
         texto = resumir(decisao, preferencias.alarme_ligado, pego, solto)
         self._estado.setText(texto)
+        if self._pet is not None:
+            resumo = self._pet.resumo()
+            self._estado_pet.setText(f"Pet: {resumo}")
+            dormindo = resumo.startswith("Dormindo")
+            self._dormir.setText("☀️ Acordar o rato" if dormindo else "💤 Pôr o rato para dormir (1 hora)")
+            texto = f"{texto}\nPet: {resumo}"
         self._icone.setToolTip(texto)
         self._icone.setIcon(self._solto if solto else self._calmo)
+
+    def _alternar_sono(self) -> None:
+        if self._pet is None:
+            return
+        if self._pet.resumo().startswith("Dormindo"):
+            self._pet.acordar()
+        else:
+            self._pet.dormir((datetime.now() + timedelta(hours=1)).isoformat(timespec="minutes"))
+        self._atualizar()
 
     def _buscar(self) -> None:
         """Em outra thread: rede lenta não pode travar o rato."""
@@ -122,65 +141,22 @@ class Bandeja(QObject):
         self._atualizar_app.setText(f"Atualizar para a versão {lancamento.versao}")
         self._atualizar_app.setVisible(True)
         if novidade:
-            self._aviso.oferecer(lancamento.versao, self._explicacao(lancamento))
-
-    def _instala_sozinho(self, lancamento: atualizacao.Lancamento) -> bool:
-        return instalacao.sabe_instalar() and bool(lancamento.download and lancamento.resumo)
-
-    def _explicacao(self, lancamento: atualizacao.Lancamento) -> str:
-        if atualiza_sozinho() or self._instala_sozinho(lancamento):
-            return "O rato reinicia sozinho e seus horários continuam iguais."
-        return "O instalador novo abre no navegador. Seus horários continuam iguais."
+            self._icone.showMessage(
+                "Rato-Alarme",
+                f"A versão {lancamento.versao} está disponível. Atualize pelo menu da bandeja.",
+            )
 
     def _instalar(self) -> None:
         lancamento = self._lancamento
-        if lancamento is None or self._instalando:
+        if lancamento is None:
             return
         if atualiza_sozinho():
-            self._instalando = True
-            self._aviso.trabalhando("Atualizando. O rato volta em alguns instantes.", False)
             subprocess.Popen(
                 ["systemd-run", "--user", "--collect", str(RAIZ / "atualizar.sh")],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
-            # Deu certo, o serviço reinicia e este processo morre antes do tempo acabar.
-            QTimer.singleShot(ESPERA_DO_SCRIPT_MS, self, self._nao_atualizou)
-        elif self._instala_sozinho(lancamento):
-            self._instalando = True
-            self._aviso.trabalhando("Baixando a versão nova.", True)
-            threading.Thread(target=self._baixar, args=(lancamento,), daemon=True).start()
         else:
-            self._aviso.hide()
-            self._abrir_site()
-
-    def _baixar(self, lancamento: atualizacao.Lancamento) -> None:
-        """Em outra thread, como a busca: o rato continua correndo durante o download."""
-        nome = atualizacao.nome_do_instalador(sys.platform, platform.machine())
-        destino = atualizacao.pasta_do_instalador() / str(nome)
-        try:
-            atualizacao.baixar(lancamento, destino, self._progresso.emit)
-        except atualizacao.ERROS_DE_DOWNLOAD:
-            self._falhou.emit()
-        else:
-            self._baixado.emit(destino)
-
-    def _trocar_app(self, instalador: Path) -> None:
-        self._aviso.trabalhando("Instalando. O rato reabre sozinho.", False)
-        try:
-            instalacao.iniciar(instalador)
-        except OSError:
-            self._nao_atualizou()
-        else:
-            self._sair()
-
-    def _nao_atualizou(self) -> None:
-        self._instalando = False
-        self._aviso.falhou()
-
-    def _abrir_site(self) -> None:
-        lancamento = self._lancamento
-        if lancamento is not None:
             webbrowser.open(lancamento.download or lancamento.pagina)
 
     def _sair(self) -> None:

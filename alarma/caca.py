@@ -11,8 +11,6 @@ RAIO_MEDO = 260.0
 VEL_FUGA = 250.0
 VEL_PASSEIO = 125.0
 INTERVALO_TRAVESSURA = 20.0
-PRIMEIRA_FALA_S = 6.0
-INTERVALO_FALA = 18.0
 LADO_RATO = 196
 MIN_TRECHO = 220.0
 MAX_TRECHO = 700.0
@@ -63,8 +61,6 @@ class Caca:
         self._inicio = inicio
         self._ciclo = inicio + DUR_GAIOLA
         self._proxima = inicio + DUR_GAIOLA + INTERVALO_TRAVESSURA
-        self._proxima_fala = inicio + DUR_GAIOLA + PRIMEIRA_FALA_S
-        self._fala_ate = 0.0
         self._opcoes = [t for t in TRAVESSURAS if t != YOUTUBE or not youtube_feito]
         self._restante = 0.0
         self._velocidade = VEL_PASSEIO
@@ -82,27 +78,9 @@ class Caca:
         return CLIQUES - self.cliques
 
     def cansado(self, agora: float) -> bool:
-        if self.fase != Fase.SOLTO or agora < self._ciclo:
+        if self.fase != Fase.SOLTO:
             return False
         return (agora - self._ciclo) % (FUGA_S + CANSADO_S) >= FUGA_S
-
-    def falando(self, agora: float) -> bool:
-        return self.fase == Fase.SOLTO and agora < self._fala_ate
-
-    def quer_falar(self, agora: float) -> bool:
-        """Só começa a reclamar correndo: parado de cansaço, ele não tem fôlego."""
-        return (
-            self.fase == Fase.SOLTO
-            and agora >= self._proxima_fala
-            and not self.falando(agora)
-            and not self.cansado(agora)
-        )
-
-    def falar(self, agora: float, duracao: float) -> None:
-        """Para enquanto fala e depois volta a correr um ciclo inteiro."""
-        self._fala_ate = agora + duracao
-        self._ciclo = self._fala_ate
-        self._proxima_fala = self._fala_ate + INTERVALO_FALA
 
     def clique(self, agora: float) -> bool:
         """Conta um acerto. Retorna True quando o rato foi pego."""
@@ -110,9 +88,6 @@ class Caca:
             return False
         self.cliques += 1
         self._ciclo = agora
-        if self.falando(agora):
-            self._fala_ate = agora
-            self._proxima_fala = agora + INTERVALO_FALA
         self._restante = 0.0
         if self.cliques >= CLIQUES:
             self.fase = Fase.PEGO
@@ -181,7 +156,7 @@ class Caca:
             if agora - self._inicio < DUR_GAIOLA:
                 return None
             self.fase = Fase.SOLTO
-        if self.fase != Fase.SOLTO or self.cansado(agora) or self.falando(agora):
+        if self.fase != Fase.SOLTO or self.cansado(agora):
             return None
 
         self.x = min(max(self.x, limites[0]), limites[2])

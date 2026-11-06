@@ -19,10 +19,11 @@ class Animacao:
         self.esquerda = esquerda
 
 
-def carregar(lado: int) -> dict[str, Animacao]:
+def carregar(lado: int, nomes=NOMES, prefixo: str = "rato-") -> dict[str, Animacao]:
+    """lado é o tamanho na tela do quadro de 48 px; folhas menores encolhem na mesma proporção."""
     animacoes = {}
-    for nome in NOMES:
-        base = PASTA / f"rato-{nome}"
+    for nome in nomes:
+        base = PASTA / f"{prefixo}{nome}"
         folha = json.loads(base.with_suffix(".json").read_text(encoding="utf-8"))
         imagem = QImage(str(base.with_suffix(".png")))
         if imagem.isNull():
@@ -31,8 +32,9 @@ def carregar(lado: int) -> dict[str, Animacao]:
         direita, esquerda = [], []
         for quadro in folha["frames"][: clipe.quadros]:
             r = quadro["frame"]
+            w, h = round(lado * r["w"] / 48), round(lado * r["h"] / 48)
             ampliado = imagem.copy(r["x"], r["y"], r["w"], r["h"]).scaled(
-                lado, lado, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation
+                w, h, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation
             )
             pixmap = QPixmap.fromImage(ampliado)
             direita.append(pixmap)

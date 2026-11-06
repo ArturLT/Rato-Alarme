@@ -36,24 +36,16 @@ class TestDecidir(unittest.TestCase):
     def test_pc_ligado_logo_depois_da_entrada_ainda_vale(self) -> None:
         self.assertTrue(decidir(as_(6, 52)).no_horario)
 
-    def test_atrasado_ainda_pega_o_rato_da_manha(self) -> None:
-        for hora, minuto in ((7, 50), (9, 0), (10, 21)):
-            decisao = decidir(as_(hora, minuto))
-            self.assertEqual(decisao.alarme, Alarme.MANHA)
-            self.assertTrue(decisao.no_horario)
+    def test_ultimo_minuto_da_tolerancia(self) -> None:
+        self.assertTrue(decidir(as_(7, 49, 59)).no_horario)
 
-    def test_manha_vale_ate_o_ultimo_segundo_antes_da_saida(self) -> None:
-        decisao = decidir(as_(12, 48, 59))
+    def test_fim_da_tolerancia(self) -> None:
+        decisao = decidir(as_(7, 50))
         self.assertEqual(decisao.alarme, Alarme.MANHA)
-        self.assertTrue(decisao.no_horario)
-
-    def test_ultimo_minuto_da_tolerancia_da_tarde(self) -> None:
-        self.assertTrue(decidir(as_(13, 48, 59)).no_horario)
-
-    def test_fim_da_tolerancia_da_tarde(self) -> None:
-        decisao = decidir(as_(13, 49))
-        self.assertEqual(decisao.alarme, Alarme.TARDE)
         self.assertFalse(decisao.no_horario)
+
+    def test_ativar_as_dez_nao_esta_no_horario(self) -> None:
+        self.assertFalse(decidir(as_(10, 21)).no_horario)
 
     def test_exatamente_na_saida(self) -> None:
         decisao = decidir(as_(12, 49))
@@ -78,7 +70,7 @@ class TestDecidir(unittest.TestCase):
 class TestEstado(unittest.TestCase):
     def setUp(self) -> None:
         self.horario = decidir(as_(7, 0))
-        self.tarde_demais = decidir(as_(20, 0))
+        self.tarde_demais = decidir(as_(10, 21))
         self.nenhum = decidir(as_(6, 0))
 
     def test_rato_solto_no_horario(self) -> None:

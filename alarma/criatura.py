@@ -9,8 +9,8 @@ from PySide6.QtCore import QObject, Qt, QTimer, Signal
 from PySide6.QtGui import QCloseEvent, QMouseEvent
 from PySide6.QtWidgets import QLabel, QPlainTextEdit
 
-from alarma import balao, config, falas, janela, sistema, sprites, travessuras
-from alarma.animacao import CORRENDO, CORRIDA, DUR_ACERTO, FALANDO, depois_de_pego, escolher
+from alarma import config, janela, sistema, sprites, travessuras
+from alarma.animacao import CORRENDO, CORRIDA, DUR_ACERTO, depois_de_pego, escolher
 from alarma.caca import FECHAR, JANELAS, LADO_RATO, MUDO, NOTAS, YOUTUBE, Caca
 from alarma.logica import Alarme, Decisao, decidir, pendente
 from alarma.registro import DISPARADO, PEGO, Registro, caminho_mudo, caminho_padrao
@@ -96,9 +96,6 @@ class Criatura(QObject):
         self._caca: Caca | None = None
         self._janela: Mascote | None = None
         self._tela: janela.JanelaQt | janela.JanelaHyprland | None = None
-        self._balao: balao.Balao | None = None
-        self._tela_balao: janela.JanelaQt | janela.JanelaHyprland | None = None
-        self._ultima_fala = ""
         self._animacoes: dict[str, sprites.Animacao] = {}
         self._nome_atual = ""
         self._inicio_clipe = 0.0
@@ -120,6 +117,11 @@ class Criatura(QObject):
         return decidir(agora, self._config.entrada, self._config.saida)
 
     @property
+    def ativa(self) -> bool:
+        """O rato do alarme está na tela. O pet sai de cena enquanto isso."""
+        return self._caca is not None or not self._oculto
+
+    @property
     def _dia(self) -> str:
         return self.decisao.agora.date().isoformat()
 
@@ -129,8 +131,6 @@ class Criatura(QObject):
         self._janela = Mascote()
         self._janela.clicado.connect(self._clicado)
         self._tela = janela.nova(self._janela)
-        self._balao = balao.Balao()
-        self._tela_balao = janela.nova(self._balao)
         self._animacoes = sprites.carregar(LADO_RATO)
         self._sincronizar()
         self._quadro()
@@ -147,18 +147,23 @@ class Criatura(QObject):
             relogio.start()
             self._relogios.append(relogio)
 
+    def desligar(self) -> None:
+        """Chamado na saída do app: solta as imagens antes do Qt fechar."""
+        for relogio in self._relogios:
+            relogio.stop()
+        travessuras.restaurar_som(self._marca_mudo)
+        self._animacoes = {}
+
     def _sincronizar(self) -> None:
-        antes = self._config
         self._config = self._ler_config()
         self.decisao = self._decidir()
-        self._reabrir(antes)
         alarme = self.decisao.alarme
         pego = self._registro.tem(self._dia, alarme, PEGO)
         disparado = self._registro.tem(self._dia, alarme, DISPARADO)
         solto = pendente(self.decisao, self._config.alarme_ligado, pego, disparado)
-        if solto and not disparado:
-            self._registro.marcar(self._dia, alarme, DISPARADO)
         if solto and self._caca is None:
+            if not disparado:
+                self._registro.marcar(self._dia, alarme, DISPARADO)
             feito = self._registro.tem(self._dia, alarme, YOUTUBE)
             self._caca = Caca(self._acaso, time.monotonic(), youtube_feito=feito)
             self._mostrar()
@@ -169,20 +174,8 @@ class Criatura(QObject):
         if not solto and not self._oculto and self._capturado_em is None:
             self._esconder()
 
-    def _reabrir(self, antes: config.Config) -> None:
-        """Horário mudado para mais tarde hoje vale de novo, mesmo com o rato já pego."""
-        hora = self.decisao.agora.time()
-        for alarme, velho, novo in (
-            (Alarme.MANHA, antes.entrada, self._config.entrada),
-            (Alarme.TARDE, antes.saida, self._config.saida),
-        ):
-            if novo != velho and hora < novo:
-                self._registro.limpar(self._dia, alarme)
-
     def _encerrar(self) -> None:
         self._caca = None
-        if self._balao is not None:
-            self._balao.calar()
         travessuras.restaurar_som(self._marca_mudo)
         if self._notas is not None:
             self._notas.close()
@@ -193,8 +186,6 @@ class Criatura(QObject):
             self._oculto = False
             self._tela.esquecer()
             self._janela.show()
-            self._tela_balao.esquecer()
-            self._balao.show()
 
     def _esconder(self) -> None:
         """Some da tela até o próximo alarme. O processo continua vivo."""
@@ -202,8 +193,6 @@ class Criatura(QObject):
         if self._janela is not None:
             self._tela.esquecer()
             self._janela.hide()
-            self._tela_balao.esquecer()
-            self._balao.hide()
 
     def _quadro(self) -> None:
         if self._janela is None or self._oculto:
@@ -222,7 +211,6 @@ class Criatura(QObject):
             caca.cansado(agora) if caca else False,
             agora < self._acerto_ate,
             depois,
-            bool(caca and caca.falando(agora)),
         )
         virado = bool(caca and caca.esquerda)
         if nome == CORRENDO and caca:
@@ -233,17 +221,13 @@ class Criatura(QObject):
         animacao = self._animacoes[nome]
         quadros = animacao.esquerda if virado else animacao.direita
         indice = animacao.clipe.indice(agora - self._inicio_clipe)
-        if nome == FALANDO and not self._balao.digitando:
-            indice = 0  # acabou de escrever: boca fechada enquanto a pessoa lê
         self._janela.setPixmap(quadros[indice])
 
     def _clicado(self) -> None:
         agora = time.monotonic()
         if self._caca is None:
             return
-        pego = self._caca.clique(agora)
-        self._balao.calar()
-        if not pego:
+        if not self._caca.clique(agora):
             self._acerto_ate = agora + DUR_ACERTO
             self._nome_atual = ""
             return
@@ -270,7 +254,6 @@ class Criatura(QObject):
         posicao = self._caca.passo(agora, cursor, self._area)
         if posicao is not None:
             self._tela.mover(*posicao)
-        self._falar(agora)
 
         travessura = self._caca.travessura(agora, self._proibidas())
         if travessura == NOTAS:
@@ -284,23 +267,6 @@ class Criatura(QObject):
             travessuras.fechar_janela(os.getpid(), self._acaso)
         elif travessura == MUDO:
             travessuras.mutar(self._marca_mudo)
-
-    def _falar(self, agora: float) -> None:
-        caca = self._caca
-        pronto = self._tela_balao.pronta()
-        if self._balao.aberto and not caca.falando(agora):
-            self._balao.calar()
-        if not pronto or caca.x is None or not caca.quer_falar(agora):
-            return
-        manha = self.decisao.alarme == Alarme.MANHA
-        horario = self._config.entrada if manha else self._config.saida
-        atraso = falas.minutos_de_atraso(self.decisao.agora, horario)
-        texto = falas.sortear(self._acaso, self.decisao.alarme, atraso, self._ultima_fala)
-        self._ultima_fala = texto
-        caca.falar(agora, balao.duracao_s(texto))
-        onde = balao.lugar(round(caca.x), round(caca.y), caca.esquerda, self._area)
-        self._tela_balao.mover(onde.x, onde.y)
-        self._balao.dizer(texto, onde)
 
     def _abrir_notas(self) -> None:
         if self._notas is not None:
