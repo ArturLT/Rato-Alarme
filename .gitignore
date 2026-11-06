@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node (ferramentas/pixelfx tem seu próprio .gitignore para records/, sheets/ e dist/)
+node_modules/
+
+# Segredos e variáveis locais
+.env
+.env.*
+
+# Logs e temporários
+*.log
+*.tmp
+
+# Claude Code: configuração pessoal e notas de planejamento
+.claude/settings.local.json
+task_plan.md
+findings.md
+progress.md
+
+# Editores e sistema
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
