@@ -34,7 +34,7 @@ O ícone do rato fica na barra de menus, no topo da tela. O app não aparece no 
 
 Na primeira vez, o painel de controle abre sozinho. Coloque seus horários de entrada e de saída e clique em **Salvar**. Os horários padrão são 06:50 e 12:49.
 
-Se você abrir o app até 1 hora depois de um desses horários, o rato aparece na hora.
+Se você abrir o app entre a entrada e a saída, ou até 1 hora depois da saída, o rato aparece na hora.
 
 Depois disso, o rato inicia junto com o computador e fica escondido até o próximo horário. Para desligar isso, use **Iniciar com o computador** no painel.
 
@@ -48,7 +48,7 @@ Enquanto está solto, ele pode:
 - abrir um vídeo de queijo no navegador, no máximo uma vez por alarme;
 - deixar o computador sem som. O som volta quando você pega o rato.
 
-Se o computador ligar até 1 hora depois do horário, ele aparece assim que o programa iniciar. Depois disso, espera o próximo horário.
+Se você se atrasar, o rato da entrada aparece assim que o programa iniciar, a qualquer momento antes da saída. O rato da saída aparece se o computador ligar até 1 hora depois do horário. Depois disso, ele espera o dia seguinte.
 
 No Linux com Hyprland, ele também mexe e fecha janelas de outros programas. Isso não existe no Windows e no macOS.
 
@@ -73,7 +73,7 @@ Para isso, o programa consulta o GitHub de tempos em tempos. Ele não envia seus
 
 ## Problemas comuns
 
-**O rato não apareceu.** Confira no painel se **Alarme ligado** está marcado e se o horário está certo. Ele só aparece se o computador estiver ligado até 1 hora depois do horário.
+**O rato não apareceu.** Confira no painel se **Alarme ligado** está marcado e se o horário está certo. Ele só aparece se o computador estiver ligado entre a entrada e a saída, ou até 1 hora depois da saída.
 
 **O computador ficou sem som.** O som volta quando você pega o rato ou quando o programa abre de novo. Se você mesmo tinha deixado sem som, ele continua assim.
 
@@ -95,7 +95,7 @@ cd Rato-Alarme
 ./instalar.sh
 ```
 
-As dependências ficam em `.venv`, dentro da pasta. Se você instalar até 1 hora depois de um horário, o alarme toca na hora. Para evitar isso, use `./instalar.sh --sem-iniciar`, e ele começa só no próximo boot.
+As dependências ficam em `.venv`, dentro da pasta. Se você instalar entre a entrada e a saída, ou até 1 hora depois da saída, o alarme toca na hora. Para evitar isso, use `./instalar.sh --sem-iniciar`, e ele começa só no próximo boot.
 
 Não mova a pasta depois de instalar. Se mover, rode `./instalar.sh` de novo.
 

@@ -149,9 +149,9 @@ class Criatura(QObject):
         pego = self._registro.tem(self._dia, alarme, PEGO)
         disparado = self._registro.tem(self._dia, alarme, DISPARADO)
         solto = pendente(self.decisao, self._config.alarme_ligado, pego, disparado)
+        if solto and not disparado:
+            self._registro.marcar(self._dia, alarme, DISPARADO)
         if solto and self._caca is None:
-            if not disparado:
-                self._registro.marcar(self._dia, alarme, DISPARADO)
             feito = self._registro.tem(self._dia, alarme, YOUTUBE)
             self._caca = Caca(self._acaso, time.monotonic(), youtube_feito=feito)
             self._mostrar()

@@ -140,6 +140,20 @@ class TestCriatura(Base):
         QTest.mouseClick(criatura._janela, Qt.MouseButton.LeftButton)
         self.assertEqual(criatura._caca.cliques, 1)
 
+    def _no_relogio(self, criatura: Criatura, alarme: str, no_horario: bool) -> None:
+        with mock.patch.object(
+            Criatura, "_decidir", return_value=Decisao(alarme, no_horario, _agora())
+        ):
+            criatura._sincronizar()
+
+    def test_cacada_da_manha_atravessa_a_saida_ate_ser_pega(self) -> None:
+        criatura = self._criatura(solto=True)
+        caca = criatura._caca
+        self._no_relogio(criatura, Alarme.TARDE, True)
+        self._no_relogio(criatura, Alarme.TARDE, False)
+        self.assertIs(criatura._caca, caca)
+        self.assertTrue(criatura._janela.isVisible())
+
     def test_sem_hyprland_nao_mexe_em_janelas_alheias(self) -> None:
         criatura = self._criatura(solto=False)
         self.assertEqual(criatura._proibidas(), (FECHAR, JANELAS))
