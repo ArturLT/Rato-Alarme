@@ -11,12 +11,11 @@ gi.require_version("Gdk", "4.0")
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gdk, GLib, Gtk
 
-from alarma import hypr, sprites, travessuras
+from alarma import config, hypr, sprites, travessuras
 from alarma.animacao import CORRENDO, CORRIDA, DUR_ACERTO, depois_de_pego, escolher
-from alarma.boot import ler_boot
 from alarma.caca import FECHAR, JANELAS, LADO_RATO, MUDO, NOTAS, YOUTUBE, Caca, Fase
-from alarma.logica import Alarme, Decisao, decidir
-from alarma.registro import Registro, caminho_padrao
+from alarma.logica import Alarme, Decisao, decidir, pendente
+from alarma.registro import DISPARADO, PEGO, Registro, caminho_mudo, caminho_padrao
 from alarma.som import tocar
 
 from datetime import datetime
@@ -24,13 +23,11 @@ from datetime import datetime
 APP_ID = "meme.alarma"
 TITULO = "alarma"
 TITULO_NOTAS = "bloco do rato"
-REAVALIAR_S = 30
+REAVALIAR_S = 2
 PASSO_MS = 100
 LETRA_MS = 70
 QUADRO_MS = 50
 AREA_RESERVA = (0, 0, 1920, 1080)
-PEGO = "pego"
-MARCA_MUDO = "mudo-do-rato"
 
 _CSS = "window.mascote { background: transparent; }"
 
@@ -39,9 +36,9 @@ class Criatura(Gtk.Application):
     def __init__(self, demo: bool = False) -> None:
         super().__init__(application_id=APP_ID)
         self._demo = demo
-        self._boot = ler_boot()
         self._registro = Registro(None if demo else caminho_padrao())
         self._acaso = random.Random()
+        self._config = self._ler_config()
         self.decisao = self._decidir()
         self._caca: Caca | None = None
         self._janela: Gtk.ApplicationWindow | None = None
@@ -51,19 +48,20 @@ class Criatura(Gtk.Application):
         self._inicio_clipe = 0.0
         self._acerto_ate = 0.0
         self._capturado_em: float | None = None
-        self._oculto = self.decisao.ativo and self._registro.tem(
-            self._dia, self.decisao.alarme, PEGO
-        )
+        self._oculto = True
         self._endereco: str | None = None
         self._area = AREA_RESERVA
         self._notas: Gtk.Window | None = None
-        self._marca_mudo = caminho_padrao().with_name(MARCA_MUDO)
+        self._marca_mudo = caminho_mudo()
+
+    def _ler_config(self) -> config.Config:
+        return config.Config() if self._demo else config.carregar(config.caminho_padrao())
 
     def _decidir(self) -> Decisao:
         agora = datetime.now().astimezone()
         if self._demo:
-            return Decisao(Alarme.MANHA, True, self._boot, agora)
-        return decidir(True, self._boot, agora)
+            return Decisao(Alarme.MANHA, True, agora)
+        return decidir(agora, self._config.entrada, self._config.saida)
 
     @property
     def _dia(self) -> str:
@@ -118,15 +116,24 @@ class Criatura(Gtk.Application):
         return True
 
     def _sincronizar(self) -> None:
+        self._config = self._ler_config()
         self.decisao = self._decidir()
         alarme = self.decisao.alarme
-        pendente = self.decisao.ativo and not self._registro.tem(self._dia, alarme, PEGO)
-        if pendente and self._caca is None:
+        pego = self._registro.tem(self._dia, alarme, PEGO)
+        disparado = self._registro.tem(self._dia, alarme, DISPARADO)
+        solto = pendente(self.decisao, self._config.alarme_ligado, pego, disparado)
+        if solto and self._caca is None:
+            if not disparado:
+                self._registro.marcar(self._dia, alarme, DISPARADO)
             feito = self._registro.tem(self._dia, alarme, YOUTUBE)
             self._caca = Caca(self._acaso, time.monotonic(), youtube_feito=feito)
             self._mostrar()
-        elif not pendente:
+        elif not solto:
             self._encerrar()
+        if not self._config.alarme_ligado:
+            self._capturado_em = None
+        if not solto and not self._oculto and self._capturado_em is None:
+            self._esconder()
 
     def _encerrar(self) -> None:
         self._caca = None
@@ -222,7 +229,8 @@ class Criatura(Gtk.Application):
         if posicao is not None:
             hypr.mover(self._endereco, *posicao)
 
-        travessura = self._caca.travessura(agora)
+        proibidas = () if self._config.fechar_janela else (FECHAR,)
+        travessura = self._caca.travessura(agora, proibidas)
         if travessura == NOTAS:
             self._abrir_notas()
         elif travessura == YOUTUBE:

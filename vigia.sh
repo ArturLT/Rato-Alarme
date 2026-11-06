@@ -1,6 +1,6 @@
 #!/bin/sh
 # Sobe a criatura com a sessão e traz ela de volta se o processo morrer.
-cd "/home/artur/Área de trabalho/off-code/alarma_meme" || exit 1
+cd "$(dirname "$0")" || exit 1
 
 LOCK="${XDG_RUNTIME_DIR:-/tmp}/alarma-meme.lock"
 exec 9>"$LOCK"

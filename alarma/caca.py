@@ -191,12 +191,12 @@ class Caca:
             self._restante = 0.0
         return round(self.x), round(self.y)
 
-    def travessura(self, agora: float) -> str | None:
+    def travessura(self, agora: float, proibidas: tuple[str, ...] = ()) -> str | None:
         """Sorteia a travessura da vez, ou None se ainda não chegou a hora."""
         if self.fase != Fase.SOLTO or agora < self._proxima:
             return None
         self._proxima = agora + INTERVALO_TRAVESSURA
-        escolhida = self._acaso.choice(self._opcoes)
+        escolhida = self._acaso.choice([t for t in self._opcoes if t not in proibidas])
         if escolhida == YOUTUBE:
             self._opcoes.remove(YOUTUBE)
         return escolhida

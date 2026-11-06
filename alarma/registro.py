@@ -5,9 +5,18 @@ import os
 from pathlib import Path
 
 
+PEGO = "pego"
+DISPARADO = "disparado"
+MARCA_MUDO = "mudo-do-rato"
+
+
 def caminho_padrao() -> Path:
     base = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local/state")
     return Path(base) / "alarma-meme" / "registro.json"
+
+
+def caminho_mudo() -> Path:
+    return caminho_padrao().with_name(MARCA_MUDO)
 
 
 class Registro:

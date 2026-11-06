@@ -6,9 +6,11 @@ from alarma.caca import (
     CLIQUES,
     DIRECOES,
     DUR_GAIOLA,
+    FECHAR,
     FUGA_S,
     INTERVALO_TRAVESSURA,
     LADO_RATO,
+    MUDO,
     TRAVESSURAS,
     VEL_FUGA,
     YOUTUBE,
@@ -173,6 +175,16 @@ class TestCaca(unittest.TestCase):
         for _ in range(5):
             agora += INTERVALO_TRAVESSURA
             self.assertNotEqual(caca.travessura(agora), YOUTUBE)
+
+    def test_travessura_proibida_nao_sai_no_sorteio(self) -> None:
+        caca = solto()
+        vistas = set()
+        agora = DUR_GAIOLA
+        for _ in range(300):
+            agora += INTERVALO_TRAVESSURA
+            vistas.add(caca.travessura(agora, (FECHAR,)))
+        self.assertNotIn(FECHAR, vistas)
+        self.assertIn(MUDO, vistas)
 
     def test_sem_travessura_antes_da_hora(self) -> None:
         caca = solto()
