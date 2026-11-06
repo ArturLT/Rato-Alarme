@@ -65,11 +65,13 @@ Para ligar de novo depois de sair, abra o Rato-Alarme pelo menu Iniciar ou pela 
 
 ## Atualizar
 
-Quando sai uma versão nova, o ícone avisa e o menu mostra **Atualizar para a versão X**. Seus horários continuam iguais depois de atualizar.
+Quando sai uma versão nova, uma janela aparece na tela. Clique em **Atualizar agora**: o programa baixa a versão nova, instala e reabre sozinho. Seus horários continuam iguais.
 
-- **Windows:** clique na opção para baixar o instalador novo e abra o arquivo. Ele troca a versão antiga.
-- **macOS:** clique na opção para baixar o DMG novo, clique em **Sair** no menu e arraste o app para **Aplicativos**, escolhendo **Substituir**. Pode ser preciso liberar o app de novo em **Privacidade e Segurança**.
-- **Linux:** clique na opção e ele atualiza e reinicia sozinho. Também dá para rodar `./atualizar.sh`.
+Se clicar em **Depois**, a opção **Atualizar para a versão X** fica no menu do ícone e a janela volta na próxima vez que o programa abrir.
+
+Quem está na versão 1.0.0 precisa instalar a versão seguinte à mão, pelo instalador do [Release](https://github.com/ArturLT/Rato-Alarme/releases/latest). Depois disso as atualizações são automáticas.
+
+No Mac, a atualização automática precisa do app na pasta **Aplicativos** e de uma conta com permissão de escrita nela. Sem isso, o instalador abre no navegador. No Linux, também dá para rodar `./atualizar.sh`.
 
 Para isso, o programa consulta o GitHub de tempos em tempos. Ele não envia seus horários nem dados pessoais.
 

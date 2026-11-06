@@ -256,12 +256,13 @@ class TestBandeja(Base):
         return self.bandeja
 
     def _parar(self) -> None:
+        self.bandeja._aviso.hide()
         self.bandeja._icone.hide()
         self.bandeja._relogio.stop()
         self.bandeja._busca.stop()
 
     def _lancamento(self, download: str | None = "https://d/i.exe") -> atualizacao.Lancamento:
-        return atualizacao.Lancamento("1.2.0", "https://p", download)
+        return atualizacao.Lancamento("1.2.0", "https://p", download, "sha256:abc")
 
     def test_atualizar_so_aparece_com_versao_nova(self) -> None:
         bandeja = self._bandeja()
@@ -269,6 +270,94 @@ class TestBandeja(Base):
         bandeja._mostrar_lancamento(self._lancamento())
         self.assertTrue(bandeja._atualizar_app.isVisible())
         self.assertIn("1.2.0", bandeja._atualizar_app.text())
+
+    def test_versao_nova_abre_a_janela_uma_vez_so(self) -> None:
+        bandeja = self._bandeja()
+        bandeja._mostrar_lancamento(self._lancamento())
+        self.assertTrue(bandeja._aviso.isVisible())
+        self.assertIn("1.2.0", bandeja._aviso._titulo.text())
+        bandeja._aviso._depois.click()
+        self.assertFalse(bandeja._aviso.isVisible())
+        bandeja._mostrar_lancamento(self._lancamento())
+        self.assertFalse(bandeja._aviso.isVisible())
+
+    def _instalar_sozinho(self, bandeja: Bandeja) -> None:
+        bandeja._mostrar_lancamento(self._lancamento())
+        with (
+            mock.patch("alarma.bandeja.atualiza_sozinho", return_value=False),
+            mock.patch("alarma.instalacao.sabe_instalar", return_value=True),
+            mock.patch("threading.Thread") as linha,
+        ):
+            bandeja._aviso._agora.click()
+            bandeja._aviso._agora.click()  # o segundo clique não pode baixar de novo
+        linha.assert_called_once()
+        self.assertTrue(bandeja._aviso._barra.isVisibleTo(bandeja._aviso))
+        self.assertFalse(bandeja._aviso._agora.isVisibleTo(bandeja._aviso))
+
+    def test_clique_baixa_instala_e_fecha_o_app(self) -> None:
+        bandeja = self._bandeja()
+        self._instalar_sozinho(bandeja)
+        with (
+            mock.patch("alarma.atualizacao.baixar") as baixar,
+            mock.patch("alarma.instalacao.iniciar") as iniciar,
+            mock.patch("alarma.travessuras.restaurar_som") as restaurar,
+            mock.patch("PySide6.QtWidgets.QApplication.exit") as sair,
+        ):
+            bandeja._baixar(self._lancamento())
+            app.processEvents()
+        baixar.assert_called_once()
+        destino = baixar.call_args.args[1]
+        iniciar.assert_called_once_with(destino)
+        restaurar.assert_called_once()
+        sair.assert_called_once_with(0)
+
+    def test_download_com_erro_deixa_tentar_de_novo_e_abrir_o_site(self) -> None:
+        bandeja = self._bandeja()
+        self._instalar_sozinho(bandeja)
+        with (
+            mock.patch("alarma.atualizacao.baixar", side_effect=ValueError),
+            mock.patch("alarma.instalacao.iniciar") as iniciar,
+        ):
+            bandeja._baixar(self._lancamento())
+            app.processEvents()
+        iniciar.assert_not_called()
+        self.assertEqual(bandeja._aviso._agora.text(), "Tentar de novo")
+        self.assertTrue(bandeja._aviso._site.isVisibleTo(bandeja._aviso))
+        with mock.patch("webbrowser.open") as abrir:
+            bandeja._aviso._site.click()
+        abrir.assert_called_once_with("https://d/i.exe")
+        self._instalar_sozinho_de_novo(bandeja)
+
+    def _instalar_sozinho_de_novo(self, bandeja: Bandeja) -> None:
+        with (
+            mock.patch("alarma.bandeja.atualiza_sozinho", return_value=False),
+            mock.patch("alarma.instalacao.sabe_instalar", return_value=True),
+            mock.patch("threading.Thread") as linha,
+        ):
+            bandeja._aviso._agora.click()
+        linha.assert_called_once()
+
+    def test_falha_ao_abrir_o_instalador_nao_fecha_o_app(self) -> None:
+        bandeja = self._bandeja()
+        self._instalar_sozinho(bandeja)
+        with (
+            mock.patch("alarma.instalacao.iniciar", side_effect=OSError),
+            mock.patch("PySide6.QtWidgets.QApplication.exit") as sair,
+        ):
+            bandeja._trocar_app(self.pasta / "instalador.exe")
+        sair.assert_not_called()
+        self.assertEqual(bandeja._aviso._agora.text(), "Tentar de novo")
+
+    def test_sem_resumo_vai_para_o_navegador(self) -> None:
+        bandeja = self._bandeja()
+        bandeja._mostrar_lancamento(atualizacao.Lancamento("1.2.0", "https://p", "https://d/i.exe"))
+        with (
+            mock.patch("alarma.bandeja.atualiza_sozinho", return_value=False),
+            mock.patch("alarma.instalacao.sabe_instalar", return_value=True),
+            mock.patch("webbrowser.open") as abrir,
+        ):
+            bandeja._instalar()
+        abrir.assert_called_once_with("https://d/i.exe")
 
     def test_sem_git_abre_o_instalador_no_navegador(self) -> None:
         bandeja = self._bandeja()
