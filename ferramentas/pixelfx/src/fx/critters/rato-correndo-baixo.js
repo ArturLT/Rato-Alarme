@@ -1,8 +1,8 @@
-import { OPCOES, TELA, cores, ratoCostas, virado } from "./_rato.js";
+import { OPCOES, TELA, cores, ratoFrente } from "./_rato.js";
 
 export const meta = {
   name: "Rato correndo baixo",
-  desc: "O rato corre para baixo, visto de costas: a corrida para cima espelhada na vertical.",
+  desc: "O rato corre para baixo, visto de frente: a cabeça vem na frente e a cauda balança atrás.",
   tags: ["critter", "rat", "run", "loop"],
   ...TELA,
   duration: 0.4,
@@ -13,5 +13,5 @@ export const meta = {
 };
 
 export function draw(p, t, o) {
-  ratoCostas(virado(p), cores(o), t / meta.duration);
+  ratoFrente(p, cores(o), t / meta.duration);
 }

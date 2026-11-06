@@ -170,15 +170,6 @@ function elipseGirada(g, cx, cy, rx, ry, ang, c) {
   });
 }
 
-// Espelha na vertical em torno do meio do rato, para ele não sair do lugar ao trocar de direção.
-const EIXO_VIRADO = -35;
-
-/** Painter que desenha de ponta-cabeça: a vista de costas vira a corrida para baixo. */
-export const virado = (p) => ({
-  dot: (x, y, c, a) => p.dot(x, EIXO_VIRADO - y, c, a),
-  blend: (x, y, c, a) => p.blend(x, EIXO_VIRADO - y, c, a),
-});
-
 /** Correndo para cima: o rato de costas, com a cauda balançando embaixo. */
 export function ratoCostas(p, cor, f) {
   const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
@@ -216,4 +207,60 @@ export function ratoCostasLado(p, cor, f) {
   pe(g, K, 3, -5 - up(Math.PI));
   g.outline(C[0]);
   g.draw(p, 1, 0, -Math.round(Math.abs(Math.sin(a)) * 2));
+}
+
+const orelhaFrente = (C, K) => (nx, ny) => (nx * nx + ny * ny < 0.34 ? K[1] : ny < -0.1 ? C[4] : C[3]);
+// Faixa escura sob a peça: separa cabeça e orelhas do corpo, que têm a mesma cor.
+const comContorno = (g, C, x, y, rx, ry, c) => { g.ellipse(x, y, rx + 1, ry + 1, () => C[1]); g.ellipse(x, y, rx, ry, c); };
+const olhos = (g, C, y, xs) => {
+  for (const x of xs) { g.set(x, y, C[6]); g.set(x + 1, y, C[0]); g.set(x, y + 1, C[0]); g.set(x + 1, y + 1, C[0]); }
+};
+const perna = (g, C, K, x0, y0, x, y) => { g.line(x0, y0, x, y - 1, C[3]); g.line(x0 + 1, y0, x + 1, y - 1, C[2]); pe(g, K, x, y); };
+
+/** Correndo para baixo: mesma silhueta da vista de costas, com a cabeça na frente e o rosto à mostra. */
+export function ratoFrente(p, cor, f) {
+  const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
+  const roll = Math.round(Math.sin(a)), dy = -Math.round(Math.abs(Math.sin(a)) * 2);
+  g.clear();
+  cauda3(g, K, onda(0, -28, 0, -7, f * 2, 4));
+  perna(g, C, K, -7, -22, -9, -18 - up(0));
+  perna(g, C, K, 6, -22, 9, -18 - up(Math.PI));
+  g.ellipse(0, -21, 7.8, 8.4, pelo(C));
+  g.ellipse(0, -24, 4, 2.4, () => C[4]);
+  perna(g, C, K, -5, -8, -5, -1 - up(Math.PI));
+  perna(g, C, K, 4, -8, 5, -1 - up(0));
+  for (const s of [-1, 1]) comContorno(g, C, roll + s * 7, -16, 3.6, 4, orelhaFrente(C, K));
+  comContorno(g, C, roll, -10, 6.4, 5.4, pelo(C));
+  g.ellipse(roll, -7.5, 3.2, 2.2, () => C[5]);
+  olhos(g, C, -12, [roll - 4, roll + 3]);
+  g.set(roll - 1, -9, K[1]); g.set(roll, -9, K[1]); g.set(roll, -8, K[0]);
+  g.outline(C[0]);
+  g.draw(p, 1, 0, dy);
+  for (const s of [-1, 1]) {
+    p.line(roll + s * 4, -8 + dy, roll + s * 8, -9 + dy, C[4]);
+    p.line(roll + s * 4, -7 + dy, roll + s * 8, -6 + dy, C[4]);
+  }
+}
+
+/** Correndo em diagonal para baixo e para a direita: três quartos de frente. */
+export function ratoFrenteLado(p, cor, f) {
+  const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
+  const dy = -Math.round(Math.abs(Math.sin(a)) * 2);
+  g.clear();
+  cauda3(g, K, onda(-9, -22, -12, -6, f * 2, 3.5));
+  perna(g, C, K, 0, -12, 0, -7 - up(0));
+  perna(g, C, K, 10, -6, 11, -1 - up(Math.PI));
+  elipseGirada(g, -2, -16, 11, 7, 0.6, (nx, ny, u, v) => (v > 0.5 ? C[5] : pelo(C)(nx, ny)));
+  comContorno(g, C, 11, -15, 3, 3.4, orelhaFrente(C, K));
+  comContorno(g, C, 3, -15, 3.4, 3.8, orelhaFrente(C, K));
+  comContorno(g, C, 7, -9, 6, 5.2, pelo(C));
+  g.ellipse(10, -6.5, 3, 2.2, () => C[5]);
+  olhos(g, C, -11, [5, 10]);
+  g.set(12, -8, K[1]); g.set(13, -8, K[1]); g.set(12, -7, K[0]);
+  perna(g, C, K, -6, -12, -7, -7 - up(Math.PI));
+  perna(g, C, K, 3, -6, 3, -1 - up(0));
+  g.outline(C[0]);
+  g.draw(p, 1, 0, dy);
+  p.line(11, -6 + dy, 15, -7 + dy, C[4]);
+  p.line(11, -5 + dy, 15, -4 + dy, C[4]);
 }
