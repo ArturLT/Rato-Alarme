@@ -36,6 +36,14 @@ class JanelaQt:
     def mover(self, x: int, y: int) -> None:
         self._janela.move(x, y)
 
+    def telas(self) -> list[tuple[int, int, int, int]]:
+        """Todos os monitores, na área útil (sem a barra de menus e o Dock)."""
+        saida = []
+        for tela in QGuiApplication.screens():
+            g = tela.availableGeometry()
+            saida.append((g.left(), g.top(), g.left() + g.width(), g.top() + g.height()))
+        return saida
+
 
 class JanelaHyprland:
     def __init__(self, janela: QWidget) -> None:
@@ -62,6 +70,9 @@ class JanelaHyprland:
     def mover(self, x: int, y: int) -> None:
         if self._endereco is not None:
             hypr.mover(self._endereco, x, y)
+
+    def telas(self) -> list[tuple[int, int, int, int]]:
+        return hypr.monitores()
 
 
 def nova(janela: QWidget) -> JanelaQt | JanelaHyprland:

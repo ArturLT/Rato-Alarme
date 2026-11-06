@@ -210,6 +210,136 @@
     44
    ],
    "columns": 3
-  }
+  },
+  "ancoras": [
+   {
+    "vista": "frente",
+    "topo": [
+     24,
+     28
+    ],
+    "olho": [
+     24,
+     32
+    ],
+    "pescoco": [
+     24,
+     40
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     25,
+     27
+    ],
+    "olho": [
+     25,
+     31
+    ],
+    "pescoco": [
+     25,
+     39
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     25,
+     26
+    ],
+    "olho": [
+     25,
+     30
+    ],
+    "pescoco": [
+     25,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     25,
+     27
+    ],
+    "olho": [
+     25,
+     31
+    ],
+    "pescoco": [
+     25,
+     39
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     24,
+     28
+    ],
+    "olho": [
+     24,
+     32
+    ],
+    "pescoco": [
+     24,
+     40
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     23,
+     27
+    ],
+    "olho": [
+     23,
+     31
+    ],
+    "pescoco": [
+     23,
+     39
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     23,
+     26
+    ],
+    "olho": [
+     23,
+     30
+    ],
+    "pescoco": [
+     23,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "frente",
+    "topo": [
+     23,
+     27
+    ],
+    "olho": [
+     23,
+     31
+    ],
+    "pescoco": [
+     23,
+     39
+    ],
+    "fade": 1
+   }
+  ]
  }
 }

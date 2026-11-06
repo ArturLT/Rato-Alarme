@@ -1,7 +1,7 @@
 {
  "frames": [
   {
-   "filename": "objeto-tela 0",
+   "filename": "objeto-meia 0",
    "frame": {
     "x": 0,
     "y": 0,
@@ -23,7 +23,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 1",
+   "filename": "objeto-meia 1",
    "frame": {
     "x": 24,
     "y": 0,
@@ -45,7 +45,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 2",
+   "filename": "objeto-meia 2",
    "frame": {
     "x": 48,
     "y": 0,
@@ -67,7 +67,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 3",
+   "filename": "objeto-meia 3",
    "frame": {
     "x": 72,
     "y": 0,
@@ -89,7 +89,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 4",
+   "filename": "objeto-meia 4",
    "frame": {
     "x": 0,
     "y": 24,
@@ -111,7 +111,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 5",
+   "filename": "objeto-meia 5",
    "frame": {
     "x": 24,
     "y": 24,
@@ -133,7 +133,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 6",
+   "filename": "objeto-meia 6",
    "frame": {
     "x": 48,
     "y": 24,
@@ -155,7 +155,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 7",
+   "filename": "objeto-meia 7",
    "frame": {
     "x": 72,
     "y": 24,
@@ -177,7 +177,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 8",
+   "filename": "objeto-meia 8",
    "frame": {
     "x": 0,
     "y": 48,
@@ -199,7 +199,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 9",
+   "filename": "objeto-meia 9",
    "frame": {
     "x": 24,
     "y": 48,
@@ -221,7 +221,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 10",
+   "filename": "objeto-meia 10",
    "frame": {
     "x": 48,
     "y": 48,
@@ -243,7 +243,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 11",
+   "filename": "objeto-meia 11",
    "frame": {
     "x": 72,
     "y": 48,
@@ -265,7 +265,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 12",
+   "filename": "objeto-meia 12",
    "frame": {
     "x": 0,
     "y": 72,
@@ -287,7 +287,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 13",
+   "filename": "objeto-meia 13",
    "frame": {
     "x": 24,
     "y": 72,
@@ -309,7 +309,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 14",
+   "filename": "objeto-meia 14",
    "frame": {
     "x": 48,
     "y": 72,
@@ -331,7 +331,7 @@
    "duration": 100
   },
   {
-   "filename": "objeto-tela 15",
+   "filename": "objeto-meia 15",
    "frame": {
     "x": 72,
     "y": 72,
@@ -356,7 +356,7 @@
  "meta": {
   "app": "https://github.com/patch-gg/pixelfx",
   "version": "1",
-  "image": "objeto-tela.png",
+  "image": "objeto-meia.png",
   "format": "RGBA8888",
   "size": {
    "w": 96,
@@ -365,7 +365,7 @@
   "scale": "1",
   "frameTags": [
    {
-    "name": "objeto-tela",
+    "name": "objeto-meia",
     "from": 0,
     "to": 15,
     "direction": "forward"

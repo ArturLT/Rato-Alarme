@@ -6,10 +6,11 @@ from datetime import datetime, time
 from pathlib import Path
 
 from alarma.caminhos import pasta_config
+from alarma.lembretes import Lembrete, ler_lista
 from alarma.logica import LIMIAR_MANHA, LIMIAR_TARDE
-from alarma.repertorio import CATEGORIAS, P_MUDO, PERMISSOES
+from alarma.repertorio import CATEGORIAS, PADRAO_DESLIGADAS, PERMISSOES
 
-PERMISSOES_PADRAO = tuple(p for p in PERMISSOES if p != P_MUDO)
+PERMISSOES_PADRAO = tuple(p for p in PERMISSOES if p not in PADRAO_DESLIGADAS)
 FALAS_PADRAO = tuple(CATEGORIAS)
 SEMPRE = "sempre"
 
@@ -34,6 +35,8 @@ class Config:
     dormir_visivel: bool = True
     permissoes: tuple[str, ...] = field(default=PERMISSOES_PADRAO)
     falas: tuple[str, ...] = field(default=FALAS_PADRAO)
+    pode_morrer: bool = True
+    lembretes: tuple[Lembrete, ...] = ()
 
     def permite(self, permissao: str | None) -> bool:
         return permissao is None or permissao in self.permissoes
@@ -123,6 +126,8 @@ def carregar(caminho: Path) -> Config:
         dormir_visivel=_sim_ou_nao(dados.get("dormir_visivel"), padrao.dormir_visivel),
         permissoes=_lista(dados.get("permissoes"), PERMISSOES, padrao.permissoes),
         falas=_lista(dados.get("falas"), CATEGORIAS, padrao.falas),
+        pode_morrer=_sim_ou_nao(dados.get("pode_morrer"), padrao.pode_morrer),
+        lembretes=ler_lista(dados.get("lembretes")),
     )
 
 
@@ -147,6 +152,8 @@ def salvar(caminho: Path, config: Config) -> None:
         "dormir_visivel": config.dormir_visivel,
         "permissoes": list(config.permissoes),
         "falas": list(config.falas),
+        "pode_morrer": config.pode_morrer,
+        "lembretes": [l.para_dict() for l in config.lembretes],
     }
     caminho.parent.mkdir(parents=True, exist_ok=True)
     temporario = caminho.with_suffix(".tmp")

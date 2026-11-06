@@ -82,6 +82,18 @@ def _minimizar_mac() -> bool:
     return _osascript(script) is not None
 
 
+def _empurrar_janela_mac(dx: int, dy: int) -> bool:
+    app = app_da_frente_mac()
+    if not app or app in PROGRAMAS_DO_RATO or app == "Finder":
+        return False
+    script = (
+        f'tell application "System Events" to tell application process "{app}" to '
+        f"if (count of windows) > 0 then set position of window 1 to "
+        f"{{(item 1 of (get position of window 1)) + {dx}, (item 2 of (get position of window 1)) + {dy}}}"
+    )
+    return _osascript(script) is not None
+
+
 # ---- Windows ----
 
 
@@ -128,6 +140,21 @@ def _minimizar_windows() -> bool:
     return True
 
 
+def _empurrar_janela_windows(dx: int, dy: int) -> bool:
+    import ctypes
+    from ctypes import wintypes
+
+    janela, _ = _janela_da_frente_windows()
+    if janela is None:
+        return False
+    r = wintypes.RECT()
+    user32 = ctypes.windll.user32
+    if not user32.GetWindowRect(janela, ctypes.byref(r)):
+        return False
+    user32.SetWindowPos(janela, 0, r.left + dx, r.top + dy, 0, 0, 0x0001 | 0x0004 | 0x0010)  # sem mudar tamanho, ordem, foco
+    return True
+
+
 # ---- Linux (Hyprland) ----
 
 
@@ -168,6 +195,77 @@ def minimizar() -> bool:
     except Exception:
         return False
     return False
+
+
+def empurrar_janela(dx: int = 80, dy: int = 0) -> bool:
+    """Empurra a janela da frente uns pixels, como se o rato tivesse esbarrado nela."""
+    try:
+        if sys.platform == "darwin":
+            return _empurrar_janela_mac(dx, dy)
+        if sys.platform == "win32":
+            return _empurrar_janela_windows(dx, dy)
+    except Exception:
+        return False
+    return False
+
+
+APPS = {
+    "calculadora": {"darwin": ["open", "-a", "Calculator"], "win32": ["calc.exe"], "linux": ["gnome-calculator"]},
+    "notas": {"darwin": ["open", "-a", "Stickies"], "win32": ["notepad.exe"], "linux": ["gnome-text-editor"]},
+}
+
+
+def abrir_app(nome: str) -> bool:
+    """Abre um programa inofensivo do sistema (calculadora, notas)."""
+    comandos = APPS.get(nome, {})
+    comando = comandos.get(sys.platform) or comandos.get("linux")
+    if not comando or (sys.platform.startswith("linux") and shutil.which(comando[0]) is None):
+        return False
+    try:
+        subprocess.Popen(comando, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except OSError:
+        return False
+    return True
+
+
+def volume() -> int | None:
+    """Volume atual de 0 a 100, se der para saber."""
+    try:
+        if sys.platform == "darwin":
+            saida = _osascript("output volume of (get volume settings)")
+            return int(saida) if saida and saida.isdigit() else None
+        if sys.platform == "win32":
+            sys.coinit_flags = 2
+            from pycaw.pycaw import AudioUtilities
+
+            return round(AudioUtilities.GetSpeakers().EndpointVolume.GetMasterVolumeLevelScalar() * 100)
+    except Exception:
+        return None
+    return None
+
+
+def definir_volume(nivel: int) -> bool:
+    nivel = max(0, min(100, int(nivel)))
+    try:
+        if sys.platform == "darwin":
+            return _osascript(f"set volume output volume {nivel}") is not None
+        if sys.platform == "win32":
+            sys.coinit_flags = 2
+            from pycaw.pycaw import AudioUtilities
+
+            AudioUtilities.GetSpeakers().EndpointVolume.SetMasterVolumeLevelScalar(nivel / 100, None)
+            return True
+    except Exception:
+        return False
+    return False
+
+
+def pode_mexer_volume() -> bool:
+    return sys.platform in ("darwin", "win32")
+
+
+def pode_empurrar() -> bool:
+    return sys.platform in ("darwin", "win32")
 
 
 def pode_minimizar() -> bool:

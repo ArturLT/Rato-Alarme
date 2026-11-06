@@ -1,0 +1,221 @@
+{
+ "lado": 32,
+ "encaixe": 16,
+ "pecas": {
+  "bone": {
+   "slot": "chapeu",
+   "nome": "Boné",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "cartola": {
+   "slot": "chapeu",
+   "nome": "Cartola",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "festa": {
+   "slot": "chapeu",
+   "nome": "Chapéu de festa",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "coroa": {
+   "slot": "chapeu",
+   "nome": "Coroa",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "gorro": {
+   "slot": "chapeu",
+   "nome": "Gorro",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "bruxo": {
+   "slot": "chapeu",
+   "nome": "Chapéu de bruxo",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "palha": {
+   "slot": "chapeu",
+   "nome": "Chapéu de palha",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "viking": {
+   "slot": "chapeu",
+   "nome": "Capacete viking",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "flor": {
+   "slot": "chapeu",
+   "nome": "Florzinha",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "topete": {
+   "slot": "cabelo",
+   "nome": "Topete",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "moicano": {
+   "slot": "cabelo",
+   "nome": "Moicano",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "franja": {
+   "slot": "cabelo",
+   "nome": "Franja",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "cachos": {
+   "slot": "cabelo",
+   "nome": "Cachinhos",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "rabo": {
+   "slot": "cabelo",
+   "nome": "Rabo de cavalo",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "oculos": {
+   "slot": "rosto",
+   "nome": "Óculos",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "escuros": {
+   "slot": "rosto",
+   "nome": "Óculos escuros",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "monoculo": {
+   "slot": "rosto",
+   "nome": "Monóculo",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "tapaolho": {
+   "slot": "rosto",
+   "nome": "Tapa-olho",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "bigode": {
+   "slot": "rosto",
+   "nome": "Bigodão",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "gravata": {
+   "slot": "pescoco",
+   "nome": "Gravata",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "borboleta": {
+   "slot": "pescoco",
+   "nome": "Gravata-borboleta",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "cachecol": {
+   "slot": "pescoco",
+   "nome": "Cachecol",
+   "vistas": [
+    "lado",
+    "frente",
+    "costas"
+   ]
+  },
+  "colar": {
+   "slot": "pescoco",
+   "nome": "Colar de pérolas",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "sino": {
+   "slot": "pescoco",
+   "nome": "Coleira com sino",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  },
+  "laco": {
+   "slot": "pescoco",
+   "nome": "Laço",
+   "vistas": [
+    "lado",
+    "frente"
+   ]
+  }
+ }
+}

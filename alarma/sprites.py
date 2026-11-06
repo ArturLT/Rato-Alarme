@@ -19,8 +19,9 @@ class Animacao:
         self.esquerda = esquerda
 
 
-def carregar(lado: int, nomes=NOMES, prefixo: str = "rato-") -> dict[str, Animacao]:
-    """lado é o tamanho na tela do quadro de 48 px; folhas menores encolhem na mesma proporção."""
+def carregar(lado: int, nomes=NOMES, prefixo: str = "rato-", montador=None) -> dict[str, Animacao]:
+    """lado é o tamanho na tela do quadro de 48 px; folhas menores encolhem na mesma proporção.
+    montador (aparencia.Montador) veste o rato: pelo, roupa e acessórios."""
     animacoes = {}
     for nome in nomes:
         base = PASTA / f"{prefixo}{nome}"
@@ -29,11 +30,21 @@ def carregar(lado: int, nomes=NOMES, prefixo: str = "rato-") -> dict[str, Animac
         if imagem.isNull():
             raise OSError(f"não consegui abrir {base.with_suffix('.png')}")
         clipe = clipe_da_folha(folha["meta"])
+        vestir = montador is not None and montador.mexe and "ancoras" in folha["meta"]
+        mascara = None
+        if vestir:
+            mascara = QImage(str(PASTA / f"{prefixo}{nome}.mascara.png"))
+            mascara = None if mascara.isNull() else mascara
+        ancoras = folha["meta"].get("ancoras") or []
         direita, esquerda = [], []
-        for quadro in folha["frames"][: clipe.quadros]:
+        for i, quadro in enumerate(folha["frames"][: clipe.quadros]):
             r = quadro["frame"]
             w, h = round(lado * r["w"] / 48), round(lado * r["h"] / 48)
-            ampliado = imagem.copy(r["x"], r["y"], r["w"], r["h"]).scaled(
+            recorte = imagem.copy(r["x"], r["y"], r["w"], r["h"])
+            if vestir:
+                pedaco = mascara.copy(r["x"], r["y"], r["w"], r["h"]) if mascara is not None else None
+                recorte = montador.vestir(recorte, pedaco, ancoras[i] if i < len(ancoras) else None, nome)
+            ampliado = recorte.scaled(
                 w, h, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.FastTransformation
             )
             pixmap = QPixmap.fromImage(ampliado)

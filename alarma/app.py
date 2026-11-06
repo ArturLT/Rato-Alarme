@@ -24,11 +24,14 @@ def encerrar(objetos: dict) -> None:
             desligar()
     for objeto in objetos.values():
         if isinstance(objeto, QWidget) and Shiboken.isValid(objeto):
+            liberar = getattr(objeto, "liberar", None)
+            if callable(liberar):
+                liberar()
             objeto.close()
             Shiboken.delete(objeto)
-    for widget in QApplication.topLevelWidgets():
-        if Shiboken.isValid(widget):
-            Shiboken.delete(widget)
+    from alarma import pixelui
+
+    pixelui.limpar()
     gc.collect()
 
 

@@ -109,26 +109,42 @@ def extras(cerebro: Cerebro, cfg: Config) -> list[rep.Interacao]:
     return lista
 
 
+# Personalidade: quanto cada tipo ou categoria pesa a mais. "travessura" mexe na chance de aprontar.
+PERSONALIDADES = {
+    "brincalhao": {rep.BRINCADEIRA: 2.0},
+    "curioso": {rep.INFO: 1.8, rep.CURIOSIDADES: 1.8, rep.PERGUNTAS: 1.5},
+    "carinhoso": {rep.CARINHO: 2.2, rep.LEMBRANCAS: 1.6},
+    "travesso": {"travessura": 1.5, rep.PROVOCACOES: 1.5},
+    "preguicoso": {"cochilar": 3.0, "espreguicar": 3.0, "sentar-olhar": 2.0, "correr": 0.4},
+}
+
+
+def _peso(i: rep.Interacao, bonus: dict) -> float:
+    return i.peso * bonus.get(i.id, 1.0) * bonus.get(i.categoria, 1.0) * (bonus.get(i.tipo, 1.0) if i.tipo != i.categoria else 1.0)
+
+
 def planejar(
     opcoes: list[rep.Interacao],
     cfg: Config,
     cerebro: Cerebro,
     acaso: random.Random,
+    personalidade: str = "",
 ) -> Plano:
     """Escolhe a próxima interação. Primeiro sorteia se vai ser travessura, depois o cérebro escolhe."""
+    bonus = PERSONALIDADES.get(personalidade, {})
     travessuras = [i for i in opcoes if i.tipo == rep.TRAVESSURA]
     resto = [i for i in opcoes if i.tipo != rep.TRAVESSURA]
     liberdade = cfg.liberdade / 100
     desistiu = None
-    if travessuras and acaso.random() < chance_travessura(cfg.travessura):
-        escolha = cerebro.escolher([(i.id, i.peso) for i in travessuras], liberdade, acaso)
+    if travessuras and acaso.random() < min(0.9, chance_travessura(cfg.travessura) * bonus.get("travessura", 1.0)):
+        escolha = cerebro.escolher([(i.id, _peso(i, bonus)) for i in travessuras], liberdade, acaso)
         if escolha.acao is not None:
             return Plano(_achar(travessuras, escolha), escolha.teimosa)
         # todas as travessuras foram desaprendidas: ele conta que desistiu
         desistiu = acaso.choice([i for i in travessuras if cerebro.opiniao(i.id) == DESISTIU_TXT] or travessuras)
     if not resto:
         return Plano(None, desistiu=desistiu)
-    escolha = cerebro.escolher([(i.id, i.peso) for i in resto], liberdade, acaso)
+    escolha = cerebro.escolher([(i.id, _peso(i, bonus)) for i in resto], liberdade, acaso)
     return Plano(_achar(resto, escolha), escolha.teimosa, desistiu)
 
 

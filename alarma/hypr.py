@@ -72,6 +72,20 @@ def area_do_cursor(posicao: tuple[int, int] | None) -> tuple[int, int, int, int]
     return None
 
 
+def monitores() -> list[tuple[int, int, int, int]]:
+    dados = _json("monitors")
+    if not isinstance(dados, list):
+        return []
+    saida = []
+    for m in dados:
+        try:
+            x0, y0 = int(m["x"]), int(m["y"])
+            saida.append((x0, y0, x0 + int(m["width"] / m["scale"]), y0 + int(m["height"] / m["scale"])))
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            continue
+    return saida
+
+
 def endereco(pid: int, titulo: str) -> str | None:
     for cliente in clientes():
         if cliente.get("pid") == pid and cliente.get("title") == titulo:

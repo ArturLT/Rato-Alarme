@@ -1,7 +1,7 @@
 {
  "frames": [
   {
-   "filename": "rato-andando 0",
+   "filename": "rato-andando-moeda 0",
    "frame": {
     "x": 0,
     "y": 0,
@@ -23,7 +23,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 1",
+   "filename": "rato-andando-moeda 1",
    "frame": {
     "x": 48,
     "y": 0,
@@ -45,7 +45,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 2",
+   "filename": "rato-andando-moeda 2",
    "frame": {
     "x": 96,
     "y": 0,
@@ -67,7 +67,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 3",
+   "filename": "rato-andando-moeda 3",
    "frame": {
     "x": 144,
     "y": 0,
@@ -89,7 +89,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 4",
+   "filename": "rato-andando-moeda 4",
    "frame": {
     "x": 0,
     "y": 48,
@@ -111,7 +111,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 5",
+   "filename": "rato-andando-moeda 5",
    "frame": {
     "x": 48,
     "y": 48,
@@ -133,7 +133,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 6",
+   "filename": "rato-andando-moeda 6",
    "frame": {
     "x": 96,
     "y": 48,
@@ -155,7 +155,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 7",
+   "filename": "rato-andando-moeda 7",
    "frame": {
     "x": 144,
     "y": 48,
@@ -177,7 +177,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 8",
+   "filename": "rato-andando-moeda 8",
    "frame": {
     "x": 0,
     "y": 96,
@@ -199,7 +199,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 9",
+   "filename": "rato-andando-moeda 9",
    "frame": {
     "x": 48,
     "y": 96,
@@ -221,7 +221,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 10",
+   "filename": "rato-andando-moeda 10",
    "frame": {
     "x": 96,
     "y": 96,
@@ -243,7 +243,7 @@
    "duration": 67
   },
   {
-   "filename": "rato-andando 11",
+   "filename": "rato-andando-moeda 11",
    "frame": {
     "x": 144,
     "y": 96,
@@ -268,7 +268,7 @@
  "meta": {
   "app": "https://github.com/patch-gg/pixelfx",
   "version": "1",
-  "image": "rato-andando.png",
+  "image": "rato-andando-moeda.png",
   "format": "RGBA8888",
   "size": {
    "w": 192,
@@ -277,7 +277,7 @@
   "scale": "1",
   "frameTags": [
    {
-    "name": "rato-andando",
+    "name": "rato-andando-moeda",
     "from": 0,
     "to": 11,
     "direction": "forward"
@@ -298,6 +298,200 @@
     44
    ],
    "columns": 4
-  }
+  },
+  "ancoras": [
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   }
+  ]
  }
 }

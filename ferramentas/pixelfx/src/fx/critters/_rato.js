@@ -3,6 +3,7 @@
 
 import { fit, hex, sparkle, TAU } from "../../core/index.js";
 import { Grid } from "./_lib.js";
+import { marcar, tronco } from "./_ancoras.js";
 
 export const PELO = ["#17121c", "#352c3a", "#574b58", "#7f7278", "#a99c9c", "#d6cabf", "#fff4e6"];
 export const ROSA = ["#7a2f48", "#d86a86", "#ffb4bc"];
@@ -64,13 +65,15 @@ export function rato(p, cor, Z = {}) {
   perna(pes[1], -6, C[2]);
   perna(pes[3], 5, C[2]);
 
+  const cabecaDe = (u, v) => ((u - hx) / 5.6) ** 2 + ((v - hy) / 4.3) ** 2 <= 1.15 || u > hx;
   g.shade(-24, -30, 26, 2, (a, b) => {
     const [u, v] = paraRato(a, b);
     if (!corpo(u, v)) return 0;
-    if (v > -3.6 && u > -7 && u < 4) return C[5];
-    if (!corpo(u + 1.2, v + 2)) return C[2];
-    if (!corpo(u - 1.6, v - 2.4)) return C[4];
-    return C[3];
+    const c = (k) => (!cabecaDe(u, v) && u > -10.5 ? tronco(k) : k);
+    if (v > -3.6 && u > -7 && u < 4) return c(C[5]);
+    if (!corpo(u + 1.2, v + 2)) return c(C[2]);
+    if (!corpo(u - 1.6, v - 2.4)) return c(C[4]);
+    return c(C[3]);
   });
   // orelha grande, com o miolo rosa
   const [ox, oy] = paraMundo(hx - 3.5, hy - 4.2 + orelha);
@@ -99,6 +102,8 @@ export function rato(p, cor, Z = {}) {
   }
   g.outline(C[0]);
   g.draw(p, fade, Math.round(x), Math.round(y));
+  const X = Math.round(x), Y = Math.round(y), M = (q) => { const [a, b] = paraMundo(...q); return [X + a, Y + b]; };
+  marcar("lado", M([hx - 0.5, hy - 4.6]), [X + ex, Y + ey], M([hx - 4, hy + 3.2]), fade);
   // bigodes por cima do contorno
   const bx = Math.round(x) + nx - 2, by = Math.round(y) + ny + 1;
   p.line(bx, by, bx + 5, by - 2, C[5], fade);
@@ -181,13 +186,15 @@ export function ratoCostas(p, cor, f) {
   g.ellipse(roll, -21, 5.6, 4.8, pelo(C));
   g.line(-8, -13 - up(Math.PI) , -9, -9 - up(Math.PI), C[3]);
   g.line(8, -13 - up(0), 9, -9 - up(0), C[3]);
-  g.ellipse(0, -10, 8.6, 9.4, pelo(C));
-  for (const [x, y] of [[-3, -5], [3, -5], [-2, -4], [2, -4]]) g.set(x, y, C[2]);
-  g.ellipse(0, -14, 4.5, 3, () => C[4]);
+  g.ellipse(0, -10, 8.6, 9.4, (nx, ny) => tronco(pelo(C)(nx, ny)));
+  for (const [x, y] of [[-3, -5], [3, -5], [-2, -4], [2, -4]]) g.set(x, y, tronco(C[2]));
+  g.ellipse(0, -14, 4.5, 3, () => tronco(C[4]));
   pe(g, K, -6, -1 - up(0));
   pe(g, K, 6, -1 - up(Math.PI));
   g.outline(C[0]);
-  g.draw(p, 1, 0, -4 - Math.round(Math.abs(Math.sin(a)) * 2));
+  const dy = -4 - Math.round(Math.abs(Math.sin(a)) * 2);
+  g.draw(p, 1, 0, dy);
+  marcar("costas", [roll, -26 + dy], null, [0, -18 + dy]);
 }
 
 /** Correndo em diagonal para cima e para a direita: três quartos de costas. */
@@ -198,7 +205,7 @@ export function ratoCostasLado(p, cor, f) {
   pe(g, K, -2, -2 - up(Math.PI));
   pe(g, K, 9, -9 - up(0));
   g.ellipse(10, -25, 3, 3.4, pelo(C));
-  elipseGirada(g, -1, -11, 11, 7, -0.75, pelo(C));
+  elipseGirada(g, -1, -11, 11, 7, -0.75, (nx, ny) => tronco(pelo(C)(nx, ny)));
   g.ellipse(8, -20, 5.2, 4.4, pelo(C));
   g.ellipse(3, -24, 3.4, 3.8, pelo(C));
   g.set(11, -21, C[0]); g.set(12, -21, C[0]);
@@ -206,7 +213,9 @@ export function ratoCostasLado(p, cor, f) {
   pe(g, K, -9, -2 - up(0));
   pe(g, K, 3, -5 - up(Math.PI));
   g.outline(C[0]);
-  g.draw(p, 1, 0, -Math.round(Math.abs(Math.sin(a)) * 2));
+  const dy = -Math.round(Math.abs(Math.sin(a)) * 2);
+  g.draw(p, 1, 0, dy);
+  marcar("costas", [7, -25 + dy], null, [4, -16 + dy]);
 }
 
 const orelhaFrente = (C, K) => (nx, ny) => (nx * nx + ny * ny < 0.34 ? K[1] : ny < -0.1 ? C[4] : C[3]);
@@ -225,8 +234,8 @@ export function ratoFrente(p, cor, f) {
   cauda3(g, K, onda(0, -28, 0, -7, f * 2, 4));
   perna(g, C, K, -7, -22, -9, -18 - up(0));
   perna(g, C, K, 6, -22, 9, -18 - up(Math.PI));
-  g.ellipse(0, -21, 7.8, 8.4, pelo(C));
-  g.ellipse(0, -24, 4, 2.4, () => C[4]);
+  g.ellipse(0, -21, 7.8, 8.4, (nx, ny) => tronco(pelo(C)(nx, ny)));
+  g.ellipse(0, -24, 4, 2.4, () => tronco(C[4]));
   perna(g, C, K, -5, -8, -5, -1 - up(Math.PI));
   perna(g, C, K, 4, -8, 5, -1 - up(0));
   for (const s of [-1, 1]) comContorno(g, C, roll + s * 7, -16, 3.6, 4, orelhaFrente(C, K));
@@ -236,6 +245,7 @@ export function ratoFrente(p, cor, f) {
   g.set(roll - 1, -9, K[1]); g.set(roll, -9, K[1]); g.set(roll, -8, K[0]);
   g.outline(C[0]);
   g.draw(p, 1, 0, dy);
+  marcar("frente", [roll, -16 + dy], [roll, -12 + dy], [roll, -4 + dy]);
   for (const s of [-1, 1]) {
     p.line(roll + s * 4, -8 + dy, roll + s * 8, -9 + dy, C[4]);
     p.line(roll + s * 4, -7 + dy, roll + s * 8, -6 + dy, C[4]);
@@ -250,7 +260,7 @@ export function ratoFrenteLado(p, cor, f) {
   cauda3(g, K, onda(-9, -22, -12, -6, f * 2, 3.5));
   perna(g, C, K, 0, -12, 0, -7 - up(0));
   perna(g, C, K, 10, -6, 11, -1 - up(Math.PI));
-  elipseGirada(g, -2, -16, 11, 7, 0.6, (nx, ny, u, v) => (v > 0.5 ? C[5] : pelo(C)(nx, ny)));
+  elipseGirada(g, -2, -16, 11, 7, 0.6, (nx, ny, u, v) => tronco(v > 0.5 ? C[5] : pelo(C)(nx, ny)));
   comContorno(g, C, 11, -15, 3, 3.4, orelhaFrente(C, K));
   comContorno(g, C, 3, -15, 3.4, 3.8, orelhaFrente(C, K));
   comContorno(g, C, 7, -9, 6, 5.2, pelo(C));
@@ -261,6 +271,7 @@ export function ratoFrenteLado(p, cor, f) {
   perna(g, C, K, 3, -6, 3, -1 - up(0));
   g.outline(C[0]);
   g.draw(p, 1, 0, dy);
+  marcar("frente", [7, -14 + dy], [8, -11 + dy], [6, -4 + dy]);
   p.line(11, -6 + dy, 15, -7 + dy, C[4]);
   p.line(11, -5 + dy, 15, -4 + dy, C[4]);
 }

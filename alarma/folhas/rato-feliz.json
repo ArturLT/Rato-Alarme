@@ -430,6 +430,296 @@
     44
    ],
    "columns": 5
-  }
+  },
+  "ancoras": [
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     13
+    ],
+    "olho": [
+     31,
+     16
+    ],
+    "pescoco": [
+     26,
+     21
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     11
+    ],
+    "olho": [
+     31,
+     15
+    ],
+    "pescoco": [
+     26,
+     20
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     11
+    ],
+    "olho": [
+     31,
+     15
+    ],
+    "pescoco": [
+     26,
+     20
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     14
+    ],
+    "olho": [
+     31,
+     17
+    ],
+    "pescoco": [
+     26,
+     22
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     13
+    ],
+    "olho": [
+     31,
+     16
+    ],
+    "pescoco": [
+     26,
+     21
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     11
+    ],
+    "olho": [
+     31,
+     15
+    ],
+    "pescoco": [
+     26,
+     20
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     11
+    ],
+    "olho": [
+     31,
+     15
+    ],
+    "pescoco": [
+     26,
+     20
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     14
+    ],
+    "olho": [
+     31,
+     17
+    ],
+    "pescoco": [
+     26,
+     22
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     29,
+     15
+    ],
+    "olho": [
+     31,
+     18
+    ],
+    "pescoco": [
+     26,
+     24
+    ],
+    "fade": 1
+   }
+  ]
  }
 }

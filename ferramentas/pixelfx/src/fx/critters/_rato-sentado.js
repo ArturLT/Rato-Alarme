@@ -2,10 +2,12 @@
 // Mesmas cores e contorno do _rato.js, para ele não mudar de cara entre a corrida e as poses paradas.
 // (0, 0) é o chão sob o pé de trás.
 
-import { TAU } from "../../core/index.js";
+import { hex, TAU } from "../../core/index.js";
 import { Grid } from "./_lib.js";
+import { marcar, tronco } from "./_ancoras.js";
 
 const GRID = new Grid(-30, -44, 62, 50);
+const LAGRIMA = [hex("#8fd0f0"), hex("#5fa8d0")];
 
 /** Pontos da cauda deitada no chão, atrás do rato, com uma ondinha na ponta. */
 export function caudaChao(fase = 0, forca = 1) {
@@ -19,14 +21,14 @@ export function caudaChao(fase = 0, forca = 1) {
 
 /**
  * Z: { x, y, respira (-1..1), olho, boca (0..1), orelha (0..1), cabeca: [dx, dy], cauda, patas, braco }
- * olho: "aberto", "fechado", "feliz" (^), "arregalado", "meio". patas: "peito", "alto" (segura algo acima da
+ * olho: "aberto", "fechado", "feliz" (^), "arregalado", "meio", "triste". lagrima: 0..1 desce pelo rosto. patas: "peito", "alto" (segura algo acima da
  * cabeça), "boca" (segura algo na boca), "acena" (a pata da frente balança, braco = 0..1).
  */
 export function ratoSentado(p, cor, Z = {}) {
   const { C, K } = cor, g = GRID;
   const {
     x = 0, y = 0, respira = 0, olho = "aberto", boca = 0, orelha = 0, cabeca = [0, 0],
-    patas = "peito", braco = 0, fade = 1,
+    patas = "peito", braco = 0, fade = 1, lagrima = -1,
   } = Z;
   const pontos = Z.cauda ?? caudaChao();
   const r = 1 + respira * 0.04;
@@ -43,16 +45,18 @@ export function ratoSentado(p, cor, Z = {}) {
   for (let i = -5; i <= 4; i++) { g.set(i, -1, C[2]); g.set(i, 0, i > 1 ? K[1] : C[1]); }
   g.set(5, 0, K[1]); g.set(5, -1, K[1]);
 
+  const naCabeca = (u, v) => ((u - hx) / 5.7) ** 2 + ((v - hy) / 4.7) ** 2 <= 1 || (u > hx && v < hy + 4);
   g.shade(-14, -36, 18, 1, (u, v) => {
     if (!dentro(u, v)) return 0;
     const barriga = ((u - 4.2) / 4.2) ** 2 + ((v + 12) / 7.5) ** 2 <= 1;
     const coxa = ((u + 3.5) / 6.2) ** 2 + ((v + 5.5) / 5.2) ** 2;
-    if (!dentro(u + 1.3, v + 1.8)) return C[2];
-    if (barriga && coxa > 1) return dentro(u - 1, v - 1) ? C[5] : C[4];
-    if (!dentro(u - 1.6, v - 2.2)) return C[4];
-    if (coxa <= 1 && coxa > 0.72 && v < -5 && u > -8) return C[2];
-    if (coxa <= 0.55 && v < -6) return C[4];
-    return C[3];
+    const c = (k) => (!naCabeca(u, v) && v < -6.5 && (coxa > 0.9 || v < -9) ? tronco(k) : k);
+    if (!dentro(u + 1.3, v + 1.8)) return c(C[2]);
+    if (barriga && coxa > 1) return c(dentro(u - 1, v - 1) ? C[5] : C[4]);
+    if (!dentro(u - 1.6, v - 2.2)) return c(C[4]);
+    if (coxa <= 1 && coxa > 0.72 && v < -5 && u > -8) return c(C[2]);
+    if (coxa <= 0.55 && v < -6) return c(C[4]);
+    return c(C[3]);
   });
 
   // orelha grande
@@ -86,6 +90,8 @@ export function ratoSentado(p, cor, Z = {}) {
     g.line(ex - 1, ey + 1, ex + 1, ey + 1, C[0]);
   } else if (olho === "feliz") {
     g.set(ex - 1, ey + 1, C[0]); g.set(ex, ey, C[0]); g.set(ex + 1, ey + 1, C[0]);
+  } else if (olho === "triste") {
+    g.set(ex - 1, ey, C[0]); g.set(ex, ey + 1, C[0]); g.set(ex + 1, ey + 1, C[0]); g.set(ex, ey + 2, C[6]);
   } else if (olho === "meio") {
     g.line(ex - 1, ey, ex + 1, ey, C[1]); g.set(ex, ey + 1, C[0]); g.set(ex + 1, ey + 1, C[0]);
   } else if (olho === "arregalado") {
@@ -103,6 +109,13 @@ export function ratoSentado(p, cor, Z = {}) {
   }
   g.outline(C[0]);
   g.draw(p, fade, Math.round(x), Math.round(y));
+  const X = Math.round(x), Y = Math.round(y);
+  marcar("lado", [X + hx - 0.5, Y + hy - 4.2], [X + ex, Y + ey], [X + hx - 3.5, Y + hy + 4.5], fade);
+  if (lagrima >= 0) {
+    const ly = Y + ey + 2 + lagrima * 7;
+    p.dot(X + ex, Math.round(ly), LAGRIMA[0], fade * (1 - lagrima * 0.6));
+    p.dot(X + ex, Math.round(ly) + 1, LAGRIMA[1], fade * (1 - lagrima * 0.6));
+  }
   const bx = Math.round(x) + nx - 2, by = Math.round(y) + ny + 1;
   p.line(bx, by, bx + 5, by - 2, C[5], fade);
   p.line(bx, by + 1, bx + 5, by + 2, C[5], fade);

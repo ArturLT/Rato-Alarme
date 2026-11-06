@@ -14,7 +14,7 @@ const OURO = ["#5a3008", "#b87010", "#f0b020", "#ffe070", "#fffbe0"].map(c);
 const FLOR = ["#3a0a1a", "#b02040", "#f05070", "#ffb0c0", "#2a5a20", "#58a038", "#ffe070"].map(c);
 const MIGALHA = ["#5a3a10", "#c89040", "#f0d090"].map(c);
 
-export const ITENS = ["queijo", "meia", "bilhete", "moeda", "flor"];
+export const ITENS = ["queijo", "meia", "bilhete", "moeda", "flor", "presente", "bolinha", "biscoito", "maca", "clipe", "lapis", "pena", "folha", "estrela", "cogumelo", "botao", "papel"];
 
 function queijo(g) {
   // fatia em cunha, com a casca escura embaixo e furinhos
@@ -61,8 +61,48 @@ function flor(g) {
   g.set(0, 2, FLOR[6]); g.set(1, 2, FLOR[6]); g.set(0, 3, FLOR[6]);
 }
 
+// Itens desenhados em texto: letra → cor; o topo do desenho é onde o rato morde.
+const ARTE = {
+  presente: { c: { a: "#d03838", A: "#ff6a5a", y: "#ffe070", Y: "#fff8c0" }, k: "#5a1018", l: [
+    "..Y.Y..", ".yYyYy.", "AAAyAAA", "aaayaaa", "AAAyAAA", "aaayaaa", "aaayaaa"] },
+  bolinha: { c: { r: "#e03050", R: "#ff7a90", w: "#ffffff", d: "#8a1c2c" }, k: "#3a0a14", l: [
+    ".RRr.", "RwRrr", "Rrrrd", "rrrdd", ".rdd."] },
+  biscoito: { c: { b: "#c88a40", B: "#f0b868", d: "#6a3a18" }, k: "#4a2810", l: [
+    ".BBBB.", "BbdbBb", "bbbbdb", "bdbbbb", ".bbdb."] },
+  maca: { c: { r: "#d03030", R: "#ff6a5a", g: "#58a038", w: "#ffd0c8", n: "#6a3a18" }, k: "#4a0a10", l: [
+    "..n.g", ".RRrr", "RwRrr", "Rrrrr", "rrrrr", ".rrr."] },
+  clipe: { c: { m: "#a8b4c0", M: "#e4ecf0" }, k: "#3f4460", l: [
+    ".MMM.", "M...m", "M.M.m", "M.M.m", "M.M.m", "m.m.m", ".mmm."] },
+  lapis: { c: { y: "#ffd23a", Y: "#ffe88a", p: "#ff9ab0", w: "#f0d0a0", g: "#3a3440", s: "#a8b4c0" }, k: "#3a2a10", l: [
+    "p", "s", "Y", "y", "Y", "y", "Y", "y", "w", "g"] },
+  pena: { c: { w: "#ffffff", W: "#d8d0e8", s: "#8a7f92" }, k: "#4a4258", l: [
+    "..W.", ".WwW", ".Wws", "Wws.", "Ws..", "s...", "s..."] },
+  folha: { c: { g: "#58a038", G: "#8ad060", n: "#2a5a20" }, k: "#1a3a10", l: [
+    "...GG", "..GgG", ".Ggng", "Ggng.", "gng..", "n...."] },
+  estrela: { c: { y: "#ffd23a", Y: "#fff8c0", o: "#e09018" }, k: "#5a3008", l: [
+    "..Y..", "..y..", "YyyyY", ".yyo.", ".y.o.", "y...o"] },
+  cogumelo: { c: { r: "#d03030", R: "#ff6a5a", w: "#ffffff", s: "#f0e0c8", S: "#c8b090" }, k: "#4a0a10", l: [
+    ".RRRR.", "RwRRwr", "rrrrrr", "..ss..", "..sS..", ".sssS."] },
+  botao: { c: { b: "#3a8cff", B: "#7ab8ff", d: "#1a4a9a" }, k: "#0a1a40", l: [
+    ".BBb.", "BbBbb", "BbdBd", "bBbdd", ".bdd."] },
+  papel: { c: { w: "#e8e4ee", W: "#ffffff", s: "#a8a0b0" }, k: "#3a3440", l: [
+    ".WWs.", "WwswW", "sWwws", "wsWsw", ".wsw."] },
+};
+
+function deArte(nome) {
+  return (g) => {
+    const a = ARTE[nome], largura = Math.max(...a.l.map((x) => x.length));
+    const cores = Object.fromEntries(Object.entries(a.c).map(([k, v]) => [k, hex(v)]));
+    a.l.forEach((linha, j) => [...linha].forEach((ch, i) => { if (cores[ch]) g.set(i - Math.floor(largura / 2), j, cores[ch]); }));
+  };
+}
+
 const DESENHOS = { queijo, meia, bilhete, moeda, flor };
 const CONTORNO = { queijo: QUEIJO[0], meia: MEIA[0], bilhete: PAPEL[0], moeda: OURO[0], flor: FLOR[0] };
+for (const nome of Object.keys(ARTE)) { DESENHOS[nome] = deArte(nome); CONTORNO[nome] = hex(ARTE[nome].k); }
+
+/** Altura do item em px, para apoiar no chão. */
+export const altura = (nome) => ({ queijo: 7, meia: 11, bilhete: 8, moeda: 9, flor: 11 }[nome] ?? ARTE[nome]?.l.length ?? 8);
 
 /** Desenha o item com o topo em (x, y). rot em passos de 90 graus não; só inclina com dx no topo. */
 export function item(p, nome, x, y, { fade = 1, brilho = 0 } = {}) {

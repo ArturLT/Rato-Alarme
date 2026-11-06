@@ -452,6 +452,222 @@
     44
    ],
    "columns": 5
-  }
+  },
+  "ancoras": [
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.95
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.86
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.76
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.67
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.57
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.48
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.38
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.29
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.19
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0.1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     30,
+     32
+    ],
+    "olho": [
+     32,
+     35
+    ],
+    "pescoco": [
+     26,
+     39
+    ],
+    "fade": 0
+   },
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
  }
 }

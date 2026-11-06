@@ -1,0 +1,497 @@
+{
+ "frames": [
+  {
+   "filename": "rato-andando-biscoito 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 1",
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 2",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 3",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 4",
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 5",
+   "frame": {
+    "x": 48,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 6",
+   "frame": {
+    "x": 96,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 7",
+   "frame": {
+    "x": 144,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 8",
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 9",
+   "frame": {
+    "x": 48,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 10",
+   "frame": {
+    "x": 96,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  },
+  {
+   "filename": "rato-andando-biscoito 11",
+   "frame": {
+    "x": 144,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "rato-andando-biscoito.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 192,
+   "h": 144
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "rato-andando-biscoito",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "critters/rato-andando",
+   "name": "Rato andando",
+   "fps": 15,
+   "loop": true,
+   "frames": 12,
+   "frameSize": [
+    48,
+    48
+   ],
+   "pivot": [
+    24,
+    44
+   ],
+   "columns": 4
+  },
+  "ancoras": [
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     30
+    ],
+    "olho": [
+     35,
+     34
+    ],
+    "pescoco": [
+     29,
+     38
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     33,
+     28
+    ],
+    "olho": [
+     35,
+     32
+    ],
+    "pescoco": [
+     29,
+     36
+    ],
+    "fade": 1
+   }
+  ]
+ }
+}

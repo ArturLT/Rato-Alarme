@@ -53,6 +53,10 @@ P_MUDO = "mutar"
 P_SITES = "abrir_sites"
 P_NOTAS = "bloco_notas"
 P_JANELAS = "mexer_janelas"
+P_EMPURRAR = "empurrar_janelas"
+P_APPS = "abrir_apps"
+P_VOLUME = "mexer_volume"
+P_NOTIFICAR = "notificacoes"
 PERMISSOES = {
     P_FECHAR_ABA: ("Fechar abas do navegador", "Só fecha quando o navegador está na frente."),
     P_MINIMIZAR: ("Minimizar janelas", "Esconde a janela da frente. Ela volta pelo Dock ou pela barra de tarefas."),
@@ -61,8 +65,13 @@ PERMISSOES = {
     P_MUDO: ("Deixar o computador sem som", "O som volta quando você bate nele ou quando ele vai embora."),
     P_SITES: ("Abrir sites", "Vídeo de queijo e outras bobagens, no máximo uma vez por hora."),
     P_NOTAS: ("Escrever no bloco de notas", "Abre um bloco do próprio rato, não mexe nos seus arquivos."),
+    P_EMPURRAR: ("Empurrar janelas", "Esbarra na janela da frente e ela anda um pouquinho."),
+    P_APPS: ("Abrir programas bobos", "Calculadora e bloquinho de notas do sistema, para fazer graça."),
+    P_VOLUME: ("Mexer no volume", "Abaixa o volume por um tempinho e depois devolve como estava."),
+    P_NOTIFICAR: ("Mandar notificações", "Recadinhos do rato nas notificações do sistema."),
     P_JANELAS: ("Mexer e fechar janelas", "Só no Linux com Hyprland."),
 }
+PADRAO_DESLIGADAS = (P_MUDO, P_VOLUME)
 
 
 @dataclass(frozen=True)
@@ -283,12 +292,31 @@ def _travessuras() -> list[Interacao]:
         Interacao("mexer-janelas", t, t, ("Arrumei suas janelas. Do meu jeito.",), P_JANELAS, 0.8, "acerto", True),
         Interacao("fechar-janela", t, t, ("Essa janela tava feia.",), P_JANELAS, 0.4, "acerto", True),
     ]
+    itens += [
+        Interacao("empurrar-janela", t, t, ("Ops, esbarrei na sua janela.",), P_EMPURRAR, 0.8, "feliz", True),
+        Interacao("abrir-calculadora", t, t, ("Abri a calculadora pra contar meus queijos.",), P_APPS, 0.4, "feliz", True),
+        Interacao("abrir-recado", t, t, ("Deixei um recado num bloquinho pra você.",), P_APPS, 0.3, "falando", True),
+        Interacao("baixar-volume", t, t, ("Shhh... abaixei o volume um pouquinho. Já devolvo.",), P_VOLUME, 0.4, "falando", True),
+        Interacao("notificacao", t, t, ("Te mandei uma notificação! Olha lá.",), P_NOTIFICAR, 0.7, "acenando", True),
+    ]
     for item, fala in (
         ("queijo", "Deixei um queijinho pra você."),
         ("meia", "Achei sua meia. Não pergunta onde."),
         ("bilhete", "Escrevi um bilhete pra você."),
         ("moeda", "Achei uma moeda! Tá aí, de presente."),
         ("flor", "Trouxe uma flor. Não arranquei do vizinho, juro."),
+        ("presente", "Trouxe um presente! Clica nele pra abrir."),
+        ("bolinha", "Achei uma bolinha! Joga pra mim? Clica nela!"),
+        ("biscoito", "Guardei um biscoito pra você. Só mordi um pouquinho."),
+        ("maca", "Uma maçã pro professor... digo, pra você."),
+        ("clipe", "Achei um clipe perdido. Vai que você precisa."),
+        ("lapis", "Seu lápis tava no chão. De nada."),
+        ("pena", "Uma pena! Não pergunta de que passarinho."),
+        ("folha", "Trouxe uma folhinha lá de fora."),
+        ("estrela", "Peguei uma estrela! Clica nela pra ter sorte."),
+        ("cogumelo", "Achei um cogumelo. Não come, hein!"),
+        ("botao", "Um botão! Acho que caiu da sua camisa."),
+        ("papel", "Escrevi uma coisa num papel. Clica pra ler."),
     ):
         itens.append(Interacao(f"trazer-{item}", t, t, (fala,), P_OBJETOS, 0.9, f"andando-{item}", True))
     itens.append(Interacao("migalhas", t, t, ("Ops, deixei cair umas migalhas.",), P_OBJETOS, 0.6, "comendo", True))
@@ -310,6 +338,11 @@ def _brincadeiras() -> list[Interacao]:
         Interacao("correr", b, b, ("Corre, corre, corre!",), None, 0.6, "correndo"),
         Interacao("esconder", b, b, ("Onde será que eu tô?",), None, 0.5, "sumindo"),
         Interacao("pedir-queijo", b, b, ("Tem queijo? Clica em mim com o botão direito...",), None, 0.6, "placa"),
+        Interacao("farejar", b, b, ("Sniff sniff... tô sentindo cheiro de queijo.",), None, 0.7, "andando"),
+        Interacao("pular", b, b, ("Hop! Hop! Hop!",), None, 0.6, "feliz"),
+        Interacao("bolinha-sozinho", b, b, ("Vou brincar de bolinha sozinho. Ou você quer jogar?",), None, 0.6, "correndo"),
+        Interacao("pedir-colo", b, b, ("Me pega no colo? Clica e arrasta!",), None, 0.5, "placa"),
+        Interacao("espreguicar", b, b, ("Ahhh... que preguiça.",), None, 0.6, "cochilando"),
     ]
 
 
@@ -373,4 +406,16 @@ REACOES = {
     "sem_resposta": ["Tudo bem, conta outra hora.", "Ah, segredo? Respeito."],
     "ensinada": ["Você me ensinou isso, lembra? \"{frase}\"", "Como você diz: \"{frase}\"", "\"{frase}\" — viu? Eu aprendi."],
     "voltou": ["Voltei! Sentiu minha falta?", "Cheguei!", "Surpresa!", "Tcharam!"],
+    "fome": ["Tô com fome... tem queijo?", "Minha barriga tá roncando!", "Me dá comida? Botão direito em mim!", "Fome, fome, fome..."],
+    "tedio": ["Tô entediado... brinca comigo?", "Que tédio. Joga uma bolinha pra mim?", "Ninguém brinca comigo..."],
+    "triste": ["Tô tristinho hoje...", "Ninguém gosta de mim...", "Um carinho ia bem agora."],
+    "fraco": ["Tô fraquinho... cuida de mim?", "Não tô me sentindo bem...", "Preciso de comida e carinho, rápido..."],
+    "colo_bom": ["Uiii, que alto!", "Me leva pra passear!", "Colinho!", "Weeee!"],
+    "colo_ruim": ["Me põe no chão!", "Ei! Me larga!", "Socorro, altura!"],
+    "solto": ["Ufa, chão firme.", "De novo! De novo!", "Pousei!"],
+    "bolinha": ["Bolinha! Bolinha!", "Peguei!", "Joga de novo!", "Essa foi longe!"],
+    "comida": ["Nham!", "Delícia!", "Obrigado! Tava com fome.", "Isso é bom demais!"],
+    "presente": ["Surpresa!", "Abriu! O que será?", "Gostou do presente?"],
+    "estrela": ["Estrela da sorte! Ganhei experiência!", "Brilhou! Fiquei mais esperto."],
+    "nasceu": ["Oi! Eu sou o {rato}! Prazer!", "Olá, mundo! Sou o {rato}, seu rato novo."],
 }

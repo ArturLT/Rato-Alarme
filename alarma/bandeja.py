@@ -13,7 +13,7 @@ from PySide6.QtCore import QObject, QTimer, Signal
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
-from alarma import atualizacao, config, travessuras
+from alarma import atualizacao, config, pixelui, travessuras
 from alarma.logica import decidir, pendente, resumir
 from alarma.painel import Painel
 from alarma.registro import DISPARADO, PEGO, Registro, caminho_mudo, caminho_padrao
@@ -45,33 +45,46 @@ class Bandeja(QObject):
         self._calmo = QIcon(str(ICONES / "rato-alarme.png"))
         self._solto = QIcon(str(ICONES / "rato-alarme-solto.png"))
 
+        # O menu da bandeja, no mesmo estilo pixel do painel.
         self._menu = QMenu()
+        pixelui.estilizar_menu(self._menu)
         self._estado = QAction(self._menu)
         self._estado.setEnabled(False)
-        self._atualizar_app = QAction(self._menu)
-        self._atualizar_app.setVisible(False)
-        self._atualizar_app.triggered.connect(self._instalar)
-        abrir = QAction("Painel de controle", self._menu)
-        abrir.triggered.connect(painel.abrir)
-        sair = QAction("Sair", self._menu)
-        sair.triggered.connect(self._sair)
-        self._menu.addAction(self._estado)
         self._estado_pet = QAction(self._menu)
         self._estado_pet.setEnabled(False)
+        self._atualizar_app = QAction(pixelui.icone("estrela"), "", self._menu)
+        self._atualizar_app.setVisible(False)
+        self._atualizar_app.triggered.connect(self._instalar)
+        abrir = QAction(pixelui.icone("casa"), "Painel do rato", self._menu)
+        abrir.triggered.connect(painel.abrir)
+        sair = QAction(pixelui.icone("tchau"), "Sair", self._menu)
+        sair.triggered.connect(self._sair)
+        self._menu.addAction(self._estado)
         self._menu.addAction(self._estado_pet)
         self._menu.addSeparator()
         self._menu.addAction(self._atualizar_app)
-        self._dormir = QAction("💤 Pôr o rato para dormir (1 hora)", self._menu)
+        self._dormir = QAction(pixelui.icone("lua"), "Pôr o rato para dormir (1 hora)", self._menu)
         self._dormir.triggered.connect(self._alternar_sono)
         if pet is not None:
-            chamar = QAction("Chamar o rato", self._menu)
+            chamar = QAction(pixelui.icone("rato"), "Chamar o rato", self._menu)
             chamar.triggered.connect(pet.chamar)
-            queijo = QAction("🧀 Dar queijo", self._menu)
-            queijo.triggered.connect(pet.dar_queijo)
+            comida = QMenu("Dar comida", self._menu)
+            pixelui.estilizar_menu(comida)
+            for tipo, nome in (("queijo", "Queijo"), ("biscoito", "Biscoito"), ("maca", "Maçã")):
+                acao = QAction(pixelui.icone_item(tipo), nome, comida)
+                acao.triggered.connect(lambda _=False, t=tipo: pet.dar_comida(t))
+                comida.addAction(acao)
+            bola = QAction(pixelui.icone("bola"), "Brincar de bolinha", self._menu)
+            bola.triggered.connect(pet.brincar_bolinha)
+            limpar = QAction(pixelui.icone("vassoura"), "Tirar as coisas da tela", self._menu)
+            limpar.triggered.connect(pet.limpar_objetos)
             self._menu.addAction(chamar)
-            self._menu.addAction(queijo)
+            self._menu.addMenu(comida).setIcon(pixelui.icone("queijo"))
+            self._menu.addAction(bola)
+            self._menu.addAction(limpar)
             self._menu.addAction(self._dormir)
             self._menu.addSeparator()
+            pet.aviso.connect(self.notificar)
         else:
             self._estado_pet.setVisible(False)
         self._menu.addAction(abrir)
@@ -110,12 +123,18 @@ class Bandeja(QObject):
         self._estado.setText(texto)
         if self._pet is not None:
             resumo = self._pet.resumo()
-            self._estado_pet.setText(f"Pet: {resumo}")
             dormindo = resumo.startswith("Dormindo")
-            self._dormir.setText("☀️ Acordar o rato" if dormindo else "💤 Pôr o rato para dormir (1 hora)")
-            texto = f"{texto}\nPet: {resumo}"
+            self._dormir.setText("Acordar o rato" if dormindo else "Pôr o rato para dormir (1 hora)")
+            self._dormir.setIcon(pixelui.icone("sol" if dormindo else "lua"))
+            self._estado_pet.setText(f"{self._pet.aparencia.nome}: {resumo}")
+            texto = f"{texto}\n{self._pet.aparencia.nome}: {resumo}"
         self._icone.setToolTip(texto)
         self._icone.setIcon(self._solto if solto else self._calmo)
+
+    def notificar(self, titulo: str, texto: str) -> None:
+        """Notificação do sistema, para avisos do rato e lembretes."""
+        if self._icone.isVisible() and texto:
+            self._icone.showMessage(titulo, texto, self._calmo, 8_000)
 
     def _alternar_sono(self) -> None:
         if self._pet is None:

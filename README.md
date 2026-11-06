@@ -56,44 +56,58 @@ No Linux com Hyprland, ele também mexe e fecha janelas de outros programas. Iss
 
 ## O rato de estimação
 
-Toda vez que o computador liga, o rato aparece, dá oi e traz alguma coisa: a previsão do tempo, o próximo feriado, uma notícia ou um presente. Depois disso ele volta sozinho de tempos em tempos.
+Toda vez que o computador liga, o rato aparece, dá oi e traz alguma coisa: a previsão do tempo, o próximo feriado, uma notícia ou um presente. Depois disso ele volta sozinho de tempos em tempos e passeia por todas as telas, inclusive de um monitor para o outro.
 
 Quando aparece, ele pode:
 
-- sentar e segurar uma placa com o clima, notícias, cotação do dólar, um fato do dia na história ou informações do seu computador (bateria, memória, disco, há quanto tempo está ligado);
-- contar piadas e curiosidades, fazer provocações e falar com carinho;
-- perguntar coisas sobre você (nome, comida favorita, time...) e usar as respostas depois;
-- repetir as frases que você ensinar no painel;
-- trazer queijo, meia, bilhete, moeda ou flor na boca e largar na tela (clique neles para sumirem);
-- fechar uma aba do navegador, minimizar a janela da frente, morder e arrastar o cursor, escrever no bloco de notas ou abrir um vídeo de queijo.
+- sentar e segurar uma placa com o clima, notícias, cotação do dólar, um fato do dia na história ou informações do seu computador;
+- contar piadas e curiosidades, provocar, falar com carinho e perguntar coisas sobre você (e usar as respostas depois);
+- repetir as frases que você ensinar;
+- trazer coisas na boca e largar na tela: queijo, meia, bilhete, moeda, flor, presente, bolinha, biscoito, maçã, clipe, lápis, pena, folha, estrela, cogumelo, botão e papel. Presente, papel e estrela fazem algo quando clicados;
+- aprontar: fechar uma aba do navegador, minimizar ou empurrar a janela da frente, morder e arrastar o cursor, abrir a calculadora, mandar notificações, abaixar o volume por um tempinho, escrever no bloco de notas.
 
-São mais de 150 interações. As travessuras só acontecem se estiverem liberadas na aba **Permissões** do painel.
+São quase 180 interações. As travessuras só acontecem se estiverem liberadas em **Permissões**.
 
-### Como ensinar o rato
+### Como brincar com ele
 
 - **Tapa:** clique nele. Ele foge e passa a evitar o que tinha acabado de fazer. Três tapas seguidos expulsam o rato por pelo menos 20 minutos.
-- **Carinho:** passe o mouse por cima dele, indo e voltando, sem clicar. Ele fica feliz e repete mais o que fez há pouco.
-- **Queijo:** botão direito nele, **Dar queijo**. Vale mais que carinho.
+- **Colo:** clique e arraste. Ele fica pendurado pela nuca e cai onde você soltar.
+- **Carinho:** passe o mouse por cima dele, indo e voltando, sem clicar.
+- **Comida:** botão direito nele, **Dar comida**: queijo, biscoito ou maçã. A comida aparece perto do cursor e ele corre para comer.
+- **Bolinha:** botão direito, **Brincar de bolinha**. Clique na bolinha para chutar; ele corre atrás.
 - **♥ e ✕ no balão:** dizem se você gostou daquela fala em especial.
 
-Com carinho e queijo ele sobe de nível e aprende falas novas. Depois de muitos tapas na mesma travessura ele desiste dela e às vezes avisa que lembrou que você não gosta. Com a **Liberdade de escolha** alta, de vez em quando ele teima. Tudo o que ele aprendeu aparece na aba **Aprendizado**, com um botão para ele esquecer tudo.
+### Vida, fome, tédio e tristeza
 
-### Painel do pet
+O rato tem **vida**, **barriga**, **diversão** e **felicidade**. Com o tempo, barriga, diversão e felicidade caem; quando ficam baixas, ele pede comida ou brincadeira e fica tristinho. Se alguma chegar a zero, a vida começa a cair, e com vida zero **ele morre** (de fome, de tédio ou de tristeza) e deixa uma lápide na tela. No painel dá para se despedir e **adotar outro rato**, ou desligar a morte em **Início › Geral**.
 
-- **Rato:** chamar agora, dar queijo, mandar embora, tirar as coisas da tela e **pôr para dormir** (30 minutos, 1 hora, 3 horas, até amanhã ou até você acordar). Dormindo, ele não apronta nada.
-- **Comportamento:** intensidade (de quanto em quanto tempo ele aparece), travessura (quantas das coisas que ele faz são travessuras) e liberdade de escolha.
-- **Permissões:** internet, falar em voz alta e cada travessura.
-- **Falas:** o que ele pode dizer, a cidade do clima, as frases que você ensinou e o que ele sabe de você.
+O tempo só conta com o programa aberto: com o computador desligado, ele dorme.
 
-No Mac, na primeira vez que o rato fechar uma aba ou minimizar uma janela, o sistema pede permissão de **Acessibilidade** e de **Automação** para o Rato-Alarme. Sem ela, ele continua com o resto.
+### Aprendizado
 
-As notícias vêm do Google Notícias, o clima do Open-Meteo, as cotações da AwesomeAPI, os fatos da Wikipédia e os feriados da BrasilAPI. A cidade é descoberta pelo endereço de internet, a não ser que você escreva uma no painel. Nada seu é enviado.
+Carinho, comida, bolinha e ♥ fazem ele repetir o que fez há pouco; tapa e ✕ fazem ele evitar. Depois de muitos tapas na mesma travessura ele desiste dela. Com a **Liberdade de escolha** alta, de vez em quando ele teima. Com carinho e comida ele sobe de nível e aprende falas novas.
+
+### Lembretes
+
+Em **Lembretes**, crie avisos para horários e dias da semana: beber água, pausa, alongar, almoço, remédio, reunião, ir dormir, bater o ponto, previsão do tempo, notícias do dia ou uma mensagem sua. No horário, o rato aparece com a placa (mesmo dormindo, se você quiser), toca um bipe e o computador mostra uma notificação.
+
+### Painel do rato
+
+O painel é todo em pixel art. No topo fica o HUD: retrato do rato, nome, humor, nível, as quatro barras e os atributos (inteligência, afeto, travessura, gula, energia). As páginas:
+
+- **Início:** dar comida, bolinha, carinho, chamar, mandar embora, limpar a tela, pôr para dormir, e a história de vocês.
+- **Personalizar:** nome, personalidade (brincalhão, curioso, carinhoso, travesso, preguiçoso), cor do pelo, roupa com estampa e cor, chapéu, cabelo e cor, coisas do rosto e do pescoço, com prévia animada.
+- **Comportamento**, **Permissões**, **Falas**, **Lembretes**, **Aprendizado** e **Ponto** (o alarme de sempre).
+
+No Mac, na primeira vez que o rato fechar uma aba, minimizar ou empurrar uma janela, o sistema pede permissão de **Acessibilidade** e de **Automação** para o Rato-Alarme. Sem ela, ele continua com o resto.
+
+As notícias vêm do Google Notícias, o clima do Open-Meteo, as cotações da AwesomeAPI, os fatos da Wikipédia e os feriados da BrasilAPI. Nada seu é enviado.
 
 Para ver o pet sem esperar, rode `python -m alarma --pet`.
 
 ## Menu do ícone
 
-- **Chamar o rato**, **Dar queijo** e **Pôr o rato para dormir** (ou **Acordar**).
+- **Chamar o rato**, **Dar comida**, **Brincar de bolinha**, **Tirar as coisas da tela** e **Pôr o rato para dormir** (ou **Acordar**).
 - **Painel de controle:** horários do alarme e tudo do pet.
 - **Sair:** encerra o rato até o próximo boot.
 
@@ -171,8 +185,16 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python -m unittest discover -s tests
 
 ## Para quem mexe no código
 
-Os sprites são feitos com o [PixelFX](ferramentas/pixelfx). As poses do pet ficam em `ferramentas/pixelfx/src/fx/critters/` (`_rato-sentado.js`, `_itens.js`, `rato-*.js` e `objeto-tela.js`). Depois de mudar um desenho, gere as folhas de novo:
+Os sprites são feitos com o [PixelFX](ferramentas/pixelfx). O rato fica em `ferramentas/pixelfx/src/fx/critters/`: `_rato.js` e `_rato-sentado.js` (o corpo), `_acessorios.js` (chapéus, cabelos, rosto e pescoço), `_itens.js` (as coisas que ele carrega) e um arquivo por animação. Depois de mudar um desenho, gere as folhas de novo:
 
 ```
 node ferramentas/exportar-folhas.mjs
 ```
+
+Cada folha sai com os pontos de encaixe da cabeça, do olho e do pescoço quadro a quadro e com uma máscara do tronco; o app usa isso para vestir o rato (`alarma/aparencia.py`).
+
+Testes: `python -m unittest discover -s tests`.
+
+Gerar o app e o DMG no Mac: `bash empacotar/gerar-dmg-mac.sh`.
+
+Subir esta pasta para o GitHub (ela veio de um .zip, sem git): `bash ferramentas/preparar-github.sh`. O script liga a pasta ao repositório, cria a branch `pet-pixel-art` com um commit e mostra o comando de push.

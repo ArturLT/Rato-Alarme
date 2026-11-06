@@ -166,10 +166,24 @@ class TestTapaECarinho(Base):
     def test_queijo_sobe_de_nivel_e_ensina_segredo(self) -> None:
         pet = self.pet()
         pet.aparecer()
+        pet._tela.cursor = lambda: (700, 700)
         for _ in range(5):
             pet.dar_queijo()
+            self.rodar(pet, 12, 0.1)
         self.assertGreaterEqual(pet.cerebro.nivel, 2)
         self.assertIn("segredo-0", pet.cerebro.desbloqueadas)
+
+    def test_comida_vai_ate_ela_e_enche_a_barriga(self) -> None:
+        pet = self.pet()
+        pet.aparecer()
+        pet.nec.barriga = 20
+        pet._tela.cursor = lambda: (1200, 700)
+        pet.dar_comida("biscoito")
+        self.assertEqual([o.nome for o in pet._objetos], ["biscoito"])
+        self.rodar(pet, 12, 0.1)
+        self.assertEqual(pet._objetos, [])
+        self.assertGreater(pet.nec.barriga, 40)
+        self.assertEqual(pet.nec.refeicoes, 1)
 
     def test_voto_no_balao_e_especifico(self) -> None:
         pet = self.pet()
@@ -197,9 +211,9 @@ class TestTravessuras(Base):
         pet = self.pet()
         pet.aparecer()
         pet._limpar()
-        pet._executar(rep.por_id()["trazer-queijo"])
+        pet._executar(rep.por_id()["trazer-meia"])
         self.rodar(pet, 40, 0.1)
-        self.assertEqual([o.nome for o in pet._objetos], ["queijo"])
+        self.assertEqual([o.nome for o in pet._objetos], ["meia"])
         objeto = pet._objetos[0]
         pet._objeto_clicado(objeto)
         self.assertEqual(pet._objetos, [])
@@ -294,3 +308,117 @@ class TestPainelDoPet(Base):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestNovidades(Base):
+    def test_bolinha_diverte(self) -> None:
+        pet = self.pet()
+        pet.aparecer()
+        pet.nec.diversao = 10
+        pet.brincar_bolinha()
+        self.assertIsNotNone(pet._bola)
+        self.rodar(pet, 40, 0.05)
+        self.assertIsNone(pet._bola)
+        self.assertGreater(pet.nec.diversao, 30)
+
+    def test_pegar_no_colo_e_soltar(self) -> None:
+        from PySide6.QtCore import QPoint
+
+        pet = self.pet()
+        pet.aparecer()
+        pet._pegar(QPoint(800, 400))
+        self.rodar(pet, 0.2)
+        self.assertEqual(pet._anim, "pendurado")
+        pet._arrastar(QPoint(900, 300))
+        from alarma.pet import CANGOTE
+
+        gx, gy = pet._ponto(CANGOTE)
+        self.assertLess(abs(gx - 900) + abs(gy - 300), 4)
+        pet.tapa()  # no colo, clique não vale como tapa
+        self.assertEqual(pet.nec.tapas, 0)
+        pet._soltar(QPoint(900, 300))
+        self.rodar(pet, 3)
+        self.assertNotEqual(pet._anim, "pendurado")
+        self.assertTrue(pet.mapa.valido((pet.x, pet.y)))
+
+    def test_anda_entre_duas_telas_sem_sair(self) -> None:
+        pet = self.pet()
+        pet._tela.telas = lambda: [(0, 200, 1440, 1100), (1440, 0, 3360, 1080)]
+        pet._atualizar_mapa()
+        pet.aparecer()
+        pet._limpar()
+        pet.x, pet.y = 100, 880
+        pet._enfileirar(Passo("andar", destino=(3000, 50), anim="andando", vel=400))
+        posicoes = []
+        for _ in range(400):
+            self.relogio.t += 0.05
+            pet._quadro()
+            posicoes.append((pet.x, pet.y))
+        self.assertTrue(all(pet.mapa.valido(p) for p in posicoes))
+        self.assertEqual(pet.mapa.indice((pet.x, pet.y)), 1)
+
+    def test_morre_de_fome_e_deixa_lapide(self) -> None:
+        pet = self.pet()
+        pet.aparecer()
+        pet.nec.barriga = 0
+        pet.nec.vida = 0.5
+        pet.nec.atualizado = 1_700_000_000 + self.relogio.t - 600
+        pet._cuidar()
+        self.assertEqual(pet.estado, Pet.MORTO)
+        self.rodar(pet, 8, 0.1)
+        self.assertIn("lapide", [o.nome for o in pet._objetos])
+        self.assertFalse(pet._janela.isVisible())
+        self.relogio.t += 10_000
+        pet._decidir()
+        self.assertEqual(pet.estado, Pet.MORTO)
+        self.assertIn("morreu de fome", pet.resumo())
+        pet.adotar()
+        self.assertEqual(pet.estado, Pet.ATIVO)
+        self.assertFalse(pet.nec.morto)
+
+    def test_sem_morte_no_painel_nao_morre(self) -> None:
+        pet = self.pet(pode_morrer=False)
+        pet.nec.barriga = 0
+        pet.nec.vida = 0.5
+        pet.nec.atualizado = 1_700_000_000 + self.relogio.t - 600
+        pet._cuidar()
+        self.assertNotEqual(pet.estado, Pet.MORTO)
+
+    def test_lembrete_acorda_e_mostra_placa(self) -> None:
+        from datetime import time as hora
+
+        from alarma.lembretes import Lembrete
+
+        pet = self.pet()
+        avisos = []
+        pet.aviso.connect(lambda t, x: avisos.append((t, x)))
+        pet.dormir(config.SEMPRE)
+        with mock.patch("alarma.som.tocar"):
+            pet.tocar_lembrete(Lembrete("x", hora(10), "mensagem", "Ligar pro banco"))
+        self.rodar(pet, 1.5)
+        self.assertEqual(pet._passo.tipo, "placa")
+        self.assertEqual(pet._passo.texto, "Ligar pro banco")
+        self.assertTrue(avisos)
+
+    def test_vestir_troca_os_sprites(self) -> None:
+        from alarma import aparencia
+
+        pet = self.pet()
+        antes = pet._anims["sentado"].direita[0].toImage()
+        pet.vestir(aparencia.Aparencia(nome="Bigode", pelo="azul", chapeu="cartola"))
+        depois = pet._anims["sentado"].direita[0].toImage()
+        self.assertNotEqual(antes, depois)
+        self.assertEqual(aparencia.carregar().nome, "Bigode")
+
+    def test_personalidade_preguicosa_cochila_mais(self) -> None:
+        import random as aleatorio
+
+        from alarma import comportamento as comp
+        from alarma.cerebro import Cerebro
+
+        cfg = config.Config(travessura=0)
+        ops = comp.elegiveis(rep.todas(), cfg, Cerebro(), lambda f: True, lambda p: True)
+        def conta(jeito):
+            acaso = aleatorio.Random(4)
+            return sum(comp.planejar(ops, cfg, Cerebro(), acaso, jeito).interacao.id in ("cochilar", "espreguicar") for _ in range(800))
+        self.assertGreater(conta("preguicoso"), conta("curioso") * 2)

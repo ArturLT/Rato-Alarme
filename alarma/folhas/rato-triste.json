@@ -1,0 +1,1143 @@
+{
+ "frames": [
+  {
+   "filename": "rato-triste 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 1",
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 2",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 3",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 4",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 5",
+   "frame": {
+    "x": 240,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 6",
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 7",
+   "frame": {
+    "x": 48,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 8",
+   "frame": {
+    "x": 96,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 9",
+   "frame": {
+    "x": 144,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 10",
+   "frame": {
+    "x": 192,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 11",
+   "frame": {
+    "x": 240,
+    "y": 48,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 12",
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 13",
+   "frame": {
+    "x": 48,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 14",
+   "frame": {
+    "x": 96,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 15",
+   "frame": {
+    "x": 144,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 16",
+   "frame": {
+    "x": 192,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 17",
+   "frame": {
+    "x": 240,
+    "y": 96,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 18",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 19",
+   "frame": {
+    "x": 48,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 20",
+   "frame": {
+    "x": 96,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 21",
+   "frame": {
+    "x": 144,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 22",
+   "frame": {
+    "x": 192,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 23",
+   "frame": {
+    "x": 240,
+    "y": 144,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 24",
+   "frame": {
+    "x": 0,
+    "y": 192,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 25",
+   "frame": {
+    "x": 48,
+    "y": 192,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 26",
+   "frame": {
+    "x": 96,
+    "y": 192,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 27",
+   "frame": {
+    "x": 144,
+    "y": 192,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  },
+  {
+   "filename": "rato-triste 28",
+   "frame": {
+    "x": 192,
+    "y": 192,
+    "w": 48,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 48
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "rato-triste.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 288,
+   "h": 240
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "rato-triste",
+    "from": 0,
+    "to": 28,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "critters/rato-triste",
+   "name": "Rato triste",
+   "fps": 12,
+   "loop": true,
+   "frames": 29,
+   "frameSize": [
+    48,
+    48
+   ],
+   "pivot": [
+    24,
+    44
+   ],
+   "columns": 6
+  },
+  "ancoras": [
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     26
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   },
+   {
+    "vista": "lado",
+    "topo": [
+     28,
+     18
+    ],
+    "olho": [
+     30,
+     21
+    ],
+    "pescoco": [
+     25,
+     27
+    ],
+    "fade": 1
+   }
+  ]
+ }
+}
