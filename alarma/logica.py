@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from datetime import datetime, time, tzinfo
 
 LIMIAR_MANHA = time(6, 50)
-LIMIAR_TARDE = time(13, 0)
+LIMIAR_TARDE = time(12, 49)
 
 
 class Alarme:

@@ -170,6 +170,15 @@ function elipseGirada(g, cx, cy, rx, ry, ang, c) {
   });
 }
 
+// Espelha na vertical em torno do meio do rato, para ele não sair do lugar ao trocar de direção.
+const EIXO_VIRADO = -35;
+
+/** Painter que desenha de ponta-cabeça: a vista de costas vira a corrida para baixo. */
+export const virado = (p) => ({
+  dot: (x, y, c, a) => p.dot(x, EIXO_VIRADO - y, c, a),
+  blend: (x, y, c, a) => p.blend(x, EIXO_VIRADO - y, c, a),
+});
+
 /** Correndo para cima: o rato de costas, com a cauda balançando embaixo. */
 export function ratoCostas(p, cor, f) {
   const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
@@ -190,34 +199,6 @@ export function ratoCostas(p, cor, f) {
   g.draw(p, 1, 0, -4 - Math.round(Math.abs(Math.sin(a)) * 2));
 }
 
-/** Correndo para baixo: o rato de frente, com a cauda por trás. */
-export function ratoFrente(p, cor, f) {
-  const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
-  const dy = -Math.round(Math.abs(Math.sin(a)) * 2), roll = Math.round(Math.sin(a));
-  g.clear();
-  cauda3(g, K, onda(5, -12, 9, -9, f * 2, 3));
-  g.ellipse(0, -9, 8.2, 8.8, (nx, ny) => (Math.abs(nx) < 0.55 && ny > -0.3 ? C[5] : pelo(C)(nx, ny)));
-  pe(g, K, -6, 0 - up(Math.PI));
-  pe(g, K, 6, 0 - up(0));
-  g.line(-4, -7, -4, -2 - up(0), C[4]); pe(g, K, -4, -1 - up(0));
-  g.line(4, -7, 4, -2 - up(Math.PI), C[4]); pe(g, K, 4, -1 - up(Math.PI));
-  for (const s of [-1, 1]) g.ellipse(s * 8 + roll, -22, 4, 4.2, (nx, ny) => (nx * nx + ny * ny < 0.45 ? K[1] : ny < 0 ? C[4] : C[3]));
-  g.ellipse(roll, -16, 7.2, 6.2, pelo(C));
-  g.ellipse(roll, -12.5, 3.8, 2.8, () => C[5]);
-  for (const s of [-1, 1]) {
-    const ex = roll + (s < 0 ? -4 : 3);
-    g.set(ex, -17, C[6]); g.set(ex + 1, -17, C[0]); g.set(ex, -16, C[0]); g.set(ex + 1, -16, C[0]);
-  }
-  g.set(roll - 1, -14, K[1]); g.set(roll, -14, K[1]); g.set(roll, -13, K[0]);
-  g.set(roll - 1, -11, C[6]); g.set(roll, -11, C[6]);
-  g.outline(C[0]);
-  g.draw(p, 1, 0, dy);
-  for (const s of [-1, 1]) {
-    p.line(roll + s * 4, -13 + dy, roll + s * 10, -15 + dy, C[5]);
-    p.line(roll + s * 4, -12 + dy, roll + s * 10, -11 + dy, C[5]);
-  }
-}
-
 /** Correndo em diagonal para cima e para a direita: três quartos de costas. */
 export function ratoCostasLado(p, cor, f) {
   const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
@@ -235,28 +216,4 @@ export function ratoCostasLado(p, cor, f) {
   pe(g, K, 3, -5 - up(Math.PI));
   g.outline(C[0]);
   g.draw(p, 1, 0, -Math.round(Math.abs(Math.sin(a)) * 2));
-}
-
-/** Correndo em diagonal para baixo e para a direita: três quartos de frente. */
-export function ratoFrenteLado(p, cor, f) {
-  const { C, K } = cor, g = GRID, a = f * TAU, up = (o) => Math.max(0, Math.sin(a + o)) * 3;
-  const dy = -Math.round(Math.abs(Math.sin(a)) * 2);
-  g.clear();
-  cauda3(g, K, onda(-8, -16, -12, -8, f * 2, 3.5));
-  pe(g, K, -8, -7 - up(Math.PI));
-  elipseGirada(g, -3, -13, 11, 7, 0.6, (nx, ny, u, v) => (v > 0.45 ? C[5] : pelo(C)(nx, ny)));
-  pe(g, K, -2, -4 - up(0));
-  g.ellipse(9, -16, 3.2, 3.6, (nx, ny) => (nx * nx + ny * ny < 0.45 ? K[1] : C[3]));
-  g.ellipse(6, -9, 6.2, 5.4, pelo(C));
-  g.ellipse(1, -14, 3.6, 4, (nx, ny) => (nx * nx + ny * ny < 0.45 ? K[1] : ny < 0 ? C[4] : C[3]));
-  g.ellipse(10, -6.5, 3.2, 2.4, () => C[5]);
-  g.set(6, -11, C[6]); g.set(7, -11, C[0]); g.set(6, -10, C[0]); g.set(7, -10, C[0]);
-  g.set(10, -11, C[0]); g.set(10, -10, C[0]);
-  g.set(12, -8, K[1]); g.set(13, -8, K[1]); g.set(12, -7, K[0]);
-  pe(g, K, 3, -1 - up(Math.PI));
-  pe(g, K, 8, -1 - up(0));
-  g.outline(C[0]);
-  g.draw(p, 1, 0, dy);
-  p.line(9, -6 + dy, 15, -9 + dy, C[5]);
-  p.line(9, -5 + dy, 15, -4 + dy, C[5]);
 }
