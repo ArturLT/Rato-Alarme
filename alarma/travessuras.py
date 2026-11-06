@@ -1,10 +1,10 @@
 """O que o rato apronta. Nunca digita em janela alheia nem mata processo."""
 
 import random
-import subprocess
+import webbrowser
 from pathlib import Path
 
-from alarma import hypr
+from alarma import hypr, sistema
 
 URL_QUEIJO = "https://www.youtube.com/watch?v=WRlCEiGFEFM"
 TEXTO_NOTAS = (
@@ -15,57 +15,31 @@ TEXTO_NOTAS = (
     "queijo queijo queijo queijo queijo\n\n"
     "assinado: o rato\n"
 )
-SAIDA_DE_SOM = "@DEFAULT_AUDIO_SINK@"
 MAX_JANELAS = 2
 DESLOCAMENTO = 120
 DIRECOES = ("l", "r", "u", "d")
 
 
-def _rodar(*comando: str) -> None:
-    """Falha de um programa externo não pode derrubar o alarme."""
-    try:
-        subprocess.Popen(
-            comando,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-    except OSError:
-        pass
-
-
 def abrir_youtube() -> None:
-    _rodar("xdg-open", URL_QUEIJO)
-
-
-def esta_mudo() -> bool:
-    try:
-        saida = subprocess.run(
-            ["wpctl", "get-volume", SAIDA_DE_SOM],
-            capture_output=True,
-            text=True,
-            timeout=2,
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return False
-    return "[MUTED]" in saida.stdout
+    webbrowser.open(URL_QUEIJO)
 
 
 def mutar(marca: Path) -> None:
     """Muta e deixa a marca. Sem marca o som não voltaria, então sem ela não muta."""
-    if not marca.exists() and not esta_mudo():
+    if not marca.exists() and not sistema.esta_mudo():
         try:
             marca.parent.mkdir(parents=True, exist_ok=True)
             marca.touch()
         except OSError:
             return
-    _rodar("wpctl", "set-mute", SAIDA_DE_SOM, "1")
+    sistema.definir_mudo(True)
 
 
 def restaurar_som(marca: Path) -> None:
     """Desfaz só o mudo do rato: o que a pessoa mutou continua mudo."""
     if not marca.exists():
         return
-    _rodar("wpctl", "set-mute", SAIDA_DE_SOM, "0")
+    sistema.definir_mudo(False)
     marca.unlink(missing_ok=True)
 
 

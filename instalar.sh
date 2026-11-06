@@ -6,56 +6,42 @@ set -eu
 PASTA="$(cd "$(dirname "$0")" && pwd)"
 UNIDADES="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 ATALHOS="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
-SERVICOS="alarma-meme.service alarma-meme-bandeja.service"
+PYTHON="$PASTA/.venv/bin/python"
 
 faltando=""
-for comando in systemctl hyprctl wpctl pw-play flock xdg-open; do
+for comando in systemctl hyprctl wpctl pw-play python3; do
     command -v "$comando" >/dev/null || faltando="$faltando $comando"
 done
-/usr/bin/python3 -c "
-import gi
-gi.require_version('Gtk', '4.0')
-from gi.repository import Gtk" 2>/dev/null || faltando="$faltando gtk4/python-gobject"
-/usr/bin/python3 -c "
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('AyatanaAppIndicator3', '0.1')
-from gi.repository import Gtk, AyatanaAppIndicator3" 2>/dev/null || faltando="$faltando libayatana-appindicator"
 if [ -n "$faltando" ]; then
     echo "Falta instalar:$faltando" >&2
     exit 1
+fi
+
+# As dependências ficam em .venv, sem tocar no Python do sistema.
+[ -x "$PYTHON" ] || python3 -m venv "$PASTA/.venv"
+"$PYTHON" -m pip install --quiet --disable-pip-version-check -r "$PASTA/requirements.txt"
+"$PYTHON" -c "from PySide6 import QtWidgets, QtNetwork"
+
+# Versões antigas tinham um serviço só para a bandeja. Hoje é um processo só.
+if [ -e "$UNIDADES/alarma-meme-bandeja.service" ]; then
+    systemctl --user disable --now alarma-meme-bandeja.service || true
+    rm -f "$UNIDADES/alarma-meme-bandeja.service"
 fi
 
 mkdir -p "$UNIDADES" "$ATALHOS"
 
 cat >"$UNIDADES/alarma-meme.service" <<UNIDADE
 [Unit]
-Description=Criatura do alarme do ponto
-PartOf=graphical-session.target
-After=graphical-session.target
-StartLimitIntervalSec=0
-
-[Service]
-ExecStart=/bin/sh "$PASTA/vigia.sh"
-Restart=always
-RestartSec=1
-
-[Install]
-WantedBy=graphical-session.target
-UNIDADE
-
-cat >"$UNIDADES/alarma-meme-bandeja.service" <<UNIDADE
-[Unit]
-Description=Ícone do Rato-Alarme na bandeja
+Description=Rato-Alarme
 PartOf=graphical-session.target
 After=graphical-session.target
 StartLimitIntervalSec=0
 
 [Service]
 WorkingDirectory=$PASTA
-ExecStart=/usr/bin/python3 -m alarma.bandeja
+ExecStart="$PYTHON" -m alarma --boot
 Restart=on-failure
-RestartSec=2
+RestartSec=1
 
 [Install]
 WantedBy=graphical-session.target
@@ -74,11 +60,11 @@ ATALHO
 
 chmod +x "$PASTA/abrir.sh"
 systemctl --user daemon-reload
-systemctl --user enable $SERVICOS
+systemctl --user enable alarma-meme.service
 
 if [ "${1:-}" = "--sem-iniciar" ]; then
     echo "Instalado. O Rato-Alarme começa no próximo boot."
 else
-    systemctl --user start $SERVICOS
+    systemctl --user start alarma-meme.service
     echo "Instalado e ligado. Procure o rato na bandeja."
 fi

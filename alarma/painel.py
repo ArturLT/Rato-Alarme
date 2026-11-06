@@ -2,119 +2,121 @@
 
 from datetime import time
 
-import gi
+from PySide6.QtCore import Qt, QTime
+from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTimeEdit,
+    QVBoxLayout,
+    QWidget,
+)
 
-gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk
-
-from alarma import config
-
-APP_ID = "meme.alarma.painel"
-
-
-def _campo_hora(hora: time) -> tuple[Gtk.Box, Gtk.SpinButton, Gtk.SpinButton]:
-    horas = Gtk.SpinButton.new_with_range(0, 23, 1)
-    minutos = Gtk.SpinButton.new_with_range(0, 59, 1)
-    horas.set_value(hora.hour)
-    minutos.set_value(hora.minute)
-    for campo in (horas, minutos):
-        campo.set_wrap(True)
-        campo.set_orientation(Gtk.Orientation.VERTICAL)
-        campo.connect("output", _dois_digitos)
-    caixa = Gtk.Box(spacing=6, halign=Gtk.Align.END)
-    caixa.append(horas)
-    caixa.append(Gtk.Label(label=":"))
-    caixa.append(minutos)
-    return caixa, horas, minutos
+from alarma import config, inicio, sistema
+from alarma.versao import VERSAO
 
 
-def _dois_digitos(campo: Gtk.SpinButton) -> bool:
-    campo.set_text(f"{campo.get_value_as_int():02d}")
-    return True
+def _campo_hora() -> QTimeEdit:
+    campo = QTimeEdit()
+    campo.setDisplayFormat("HH:mm")
+    campo.setWrapping(True)
+    return campo
 
 
-def _rotulo(texto: str, dica: str) -> Gtk.Box:
-    caixa = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER, hexpand=True)
-    caixa.append(Gtk.Label(label=texto, xalign=0))
-    detalhe = Gtk.Label(label=dica, xalign=0, wrap=True, max_width_chars=38)
-    detalhe.add_css_class("dim-label")
-    caixa.append(detalhe)
+def _discreto(rotulo: QLabel) -> QLabel:
+    rotulo.setForegroundRole(QPalette.ColorRole.PlaceholderText)
+    return rotulo
+
+
+def _rotulo(texto: str, dica: str) -> QWidget:
+    caixa = QWidget()
+    colunas = QVBoxLayout(caixa)
+    colunas.setContentsMargins(0, 0, 0, 0)
+    colunas.addWidget(QLabel(texto))
+    colunas.addWidget(_discreto(QLabel(dica, wordWrap=True)))
     return caixa
 
 
-class Painel(Gtk.Application):
+class Painel(QWidget):
     def __init__(self) -> None:
-        super().__init__(application_id=APP_ID)
-        self._janela: Gtk.ApplicationWindow | None = None
+        super().__init__()
+        self.setWindowTitle("Rato-Alarme")
+        self._entrada = _campo_hora()
+        self._saida = _campo_hora()
+        self._alarme = QCheckBox()
+        self._fechar = QCheckBox()
+        self._inicio = QCheckBox()
 
-    def do_activate(self) -> None:
-        if self._janela is not None:
-            self._janela.present()
-            return
-
-        atual = config.carregar(config.caminho_padrao())
-        entrada, self._entrada_h, self._entrada_m = _campo_hora(atual.entrada)
-        saida, self._saida_h, self._saida_m = _campo_hora(atual.saida)
-        self._alarme = Gtk.Switch(active=atual.alarme_ligado, valign=Gtk.Align.CENTER)
-        self._fechar = Gtk.Switch(active=atual.fechar_janela, valign=Gtk.Align.CENTER)
-        self._alarme.set_halign(Gtk.Align.END)
-        self._fechar.set_halign(Gtk.Align.END)
-
-        grade = Gtk.Grid(row_spacing=16, column_spacing=24)
-        linhas = (
-            ("Horário de entrada", "Nessa hora o rato aparece e toca o alarme.", entrada),
-            ("Horário de saída", "Nessa hora o rato aparece de novo.", saida),
+        linhas = [
+            ("Horário de entrada", "Nessa hora o rato aparece e toca o alarme.", self._entrada),
+            ("Horário de saída", "Nessa hora o rato aparece de novo.", self._saida),
             ("Alarme ligado", "Desligado, o rato some e não volta até você ligar de novo.", self._alarme),
-            ("Rato pode fechar janelas", "Desligado, ele continua com as outras travessuras.", self._fechar),
-        )
+        ]
+        if sistema.mexe_em_outras_janelas():
+            linhas.append(
+                ("Rato pode fechar janelas", "Desligado, ele continua com as outras travessuras.", self._fechar)
+            )
+        if inicio.gerenciado():
+            linhas.append(
+                ("Iniciar com o computador", "Desligado, o rato só roda quando você abrir o programa.", self._inicio)
+            )
+
+        grade = QGridLayout()
+        grade.setVerticalSpacing(16)
+        grade.setHorizontalSpacing(24)
+        grade.setColumnStretch(0, 1)
         for linha, (texto, dica, controle) in enumerate(linhas):
-            grade.attach(_rotulo(texto, dica), 0, linha, 1, 1)
-            grade.attach(controle, 1, linha, 1, 1)
+            grade.addWidget(_rotulo(texto, dica), linha, 0)
+            grade.addWidget(controle, linha, 1, Qt.AlignmentFlag.AlignRight)
 
-        self._aviso = Gtk.Label(xalign=0, hexpand=True, wrap=True)
-        salvar = Gtk.Button(label="Salvar")
-        salvar.add_css_class("suggested-action")
-        salvar.connect("clicked", self._salvar)
-        rodape = Gtk.Box(spacing=12)
-        rodape.append(self._aviso)
-        rodape.append(salvar)
+        self._aviso = QLabel(wordWrap=True)
+        salvar = QPushButton("Salvar")
+        salvar.setDefault(True)
+        salvar.clicked.connect(self.salvar)
+        rodape = QHBoxLayout()
+        rodape.addWidget(self._aviso, 1)
+        rodape.addWidget(salvar)
 
-        corpo = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            spacing=20,
-            margin_top=20,
-            margin_bottom=20,
-            margin_start=20,
-            margin_end=20,
-        )
-        corpo.append(grade)
-        corpo.append(rodape)
+        corpo = QVBoxLayout(self)
+        corpo.setContentsMargins(20, 20, 20, 20)
+        corpo.setSpacing(20)
+        corpo.addLayout(grade)
+        corpo.addLayout(rodape)
+        corpo.addWidget(_discreto(QLabel(f"Versão {VERSAO}")))
+        self.setFixedWidth(440)
 
-        self._janela = Gtk.ApplicationWindow(
-            application=self, title="Rato-Alarme", resizable=False, child=corpo
-        )
-        self._janela.present()
+    def abrir(self) -> None:
+        self._preencher(config.carregar(config.caminho_padrao()))
+        self.show()
+        self.raise_()
+        self.activateWindow()
 
-    def _salvar(self, *_args: object) -> None:
+    def _preencher(self, atual: config.Config) -> None:
+        self._entrada.setTime(QTime(atual.entrada.hour, atual.entrada.minute))
+        self._saida.setTime(QTime(atual.saida.hour, atual.saida.minute))
+        self._alarme.setChecked(atual.alarme_ligado)
+        self._fechar.setChecked(atual.fechar_janela)
+        self._inicio.setChecked(atual.iniciar_com_sistema)
+        self._aviso.clear()
+
+    def salvar(self) -> None:
+        entrada, saida = self._entrada.time(), self._saida.time()
         novo = config.Config(
-            time(self._entrada_h.get_value_as_int(), self._entrada_m.get_value_as_int()),
-            time(self._saida_h.get_value_as_int(), self._saida_m.get_value_as_int()),
-            self._alarme.get_active(),
-            self._fechar.get_active(),
+            time(entrada.hour(), entrada.minute()),
+            time(saida.hour(), saida.minute()),
+            self._alarme.isChecked(),
+            self._fechar.isChecked(),
+            self._inicio.isChecked(),
         )
         try:
             config.salvar(config.caminho_padrao(), novo)
         except ValueError:
-            self._aviso.set_label("A entrada precisa ser antes da saída.")
+            self._aviso.setText("A entrada precisa ser antes da saída.")
         except OSError:
-            self._aviso.set_label("Não consegui salvar a configuração.")
+            self._aviso.setText("Não consegui salvar a configuração.")
         else:
-            self._aviso.set_label("Salvo.")
-
-
-def main() -> int:
-    return Painel().run(None)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+            inicio.aplicar(novo.iniciar_com_sistema)
+            self._aviso.setText("Salvo.")

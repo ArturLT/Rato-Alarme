@@ -3,10 +3,11 @@
 import math
 import os
 import struct
-import subprocess
+import tempfile
 import wave
 from pathlib import Path
 
+from alarma import sistema
 from alarma.logica import Alarme
 
 _FREQUENCIA = {
@@ -26,7 +27,7 @@ def _tom(taxa: int, frequencia: float, segundos: float) -> bytes:
 
 
 def caminho_do_tom(alarme: str) -> Path:
-    base = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp"))
+    base = Path(os.environ.get("XDG_RUNTIME_DIR") or tempfile.gettempdir())
     return base / f"alarma-meme-{alarme}.wav"
 
 
@@ -49,9 +50,4 @@ def garantir_tom(alarme: str) -> Path:
 def tocar(alarme: str) -> None:
     if alarme == Alarme.NENHUM:
         return
-    arquivo = garantir_tom(alarme)
-    subprocess.Popen(
-        ["pw-play", str(arquivo)],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    sistema.tocar(garantir_tom(alarme))

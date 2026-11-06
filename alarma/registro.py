@@ -1,9 +1,9 @@
 """Lembra o que já aconteceu em cada alarme, mesmo se a criatura reiniciar."""
 
 import json
-import os
 from pathlib import Path
 
+from alarma.caminhos import pasta_estado
 
 PEGO = "pego"
 DISPARADO = "disparado"
@@ -11,8 +11,7 @@ MARCA_MUDO = "mudo-do-rato"
 
 
 def caminho_padrao() -> Path:
-    base = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local/state")
-    return Path(base) / "alarma-meme" / "registro.json"
+    return pasta_estado() / "registro.json"
 
 
 def caminho_mudo() -> Path:

@@ -7,6 +7,10 @@ venv/
 .coverage
 htmlcov/
 
+# Empacotamento
+build/
+dist/
+
 # Node (ferramentas/pixelfx tem seu próprio .gitignore para records/, sheets/ e dist/)
 node_modules/
 

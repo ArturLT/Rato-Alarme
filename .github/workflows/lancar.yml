@@ -1,0 +1,76 @@
+name: Lançar versão
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  empacotar:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            instalador: Rato-Alarme-Windows.exe
+          - os: macos-latest
+            instalador: Rato-Alarme-macOS-AppleSilicon.dmg
+          - os: macos-15-intel
+            instalador: Rato-Alarme-macOS-Intel.dmg
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: A tag precisa bater com alarma/versao.py
+        shell: bash
+        run: |
+          versao="$(python -c 'from alarma.versao import VERSAO; print(VERSAO)')"
+          test "v$versao" = "$GITHUB_REF_NAME"
+          echo "VERSAO=$versao" >> "$GITHUB_ENV"
+      - run: pip install -r requirements-empacotar.txt
+      - run: python -m unittest discover -s tests
+      - run: pyinstaller --noconfirm empacotar/rato-alarme.spec
+
+      - name: Conferir o app e montar o instalador do Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $p = Start-Process dist\Rato-Alarme\Rato-Alarme.exe -ArgumentList '--verificar' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { exit 1 }
+          choco install innosetup -y --no-progress
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' "/DVersao=$env:VERSAO" empacotar\rato-alarme.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Conferir o app e montar o DMG do Mac
+        if: runner.os == 'macOS'
+        run: |
+          dist/Rato-Alarme.app/Contents/MacOS/Rato-Alarme --verificar
+          mkdir dmg
+          cp -R dist/Rato-Alarme.app dmg/
+          ln -s /Applications dmg/Applications
+          hdiutil create -volname Rato-Alarme -srcfolder dmg -ov -format UDZO "dist/${{ matrix.instalador }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.instalador }}
+          path: dist/${{ matrix.instalador }}
+          if-no-files-found: error
+
+  publicar:
+    needs: empacotar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: instaladores
+          merge-multiple: true
+      - name: Criar o Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" instaladores/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes

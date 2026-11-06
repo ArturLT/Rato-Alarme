@@ -1,0 +1,3 @@
+PySide6-Essentials==6.12.0
+certifi
+pycaw==20260927; sys_platform == "win32"

@@ -1,11 +1,11 @@
-"""Preferências que a pessoa muda no painel. Sem GTK: a bandeja também lê daqui."""
+"""Preferências que a pessoa muda no painel. A bandeja e o rato também leem daqui."""
 
 import json
-import os
 from dataclasses import dataclass
 from datetime import time
 from pathlib import Path
 
+from alarma.caminhos import pasta_config
 from alarma.logica import LIMIAR_MANHA, LIMIAR_TARDE
 
 
@@ -15,11 +15,11 @@ class Config:
     saida: time = LIMIAR_TARDE
     alarme_ligado: bool = True
     fechar_janela: bool = True
+    iniciar_com_sistema: bool = True
 
 
 def caminho_padrao() -> Path:
-    base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
-    return Path(base) / "alarma-meme" / "config.json"
+    return pasta_config() / "config.json"
 
 
 def _hora(texto: object, padrao: time) -> time:
@@ -53,6 +53,7 @@ def carregar(caminho: Path) -> Config:
         saida,
         _sim_ou_nao(dados.get("alarme_ligado"), padrao.alarme_ligado),
         _sim_ou_nao(dados.get("fechar_janela"), padrao.fechar_janela),
+        _sim_ou_nao(dados.get("iniciar_com_sistema"), padrao.iniciar_com_sistema),
     )
 
 
@@ -64,6 +65,7 @@ def salvar(caminho: Path, config: Config) -> None:
         "saida": config.saida.strftime("%H:%M"),
         "alarme_ligado": config.alarme_ligado,
         "fechar_janela": config.fechar_janela,
+        "iniciar_com_sistema": config.iniciar_com_sistema,
     }
     caminho.parent.mkdir(parents=True, exist_ok=True)
     temporario = caminho.with_suffix(".tmp")

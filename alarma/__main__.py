@@ -1,3 +1,3 @@
-from alarma.criatura import main
+from alarma.app import main
 
 raise SystemExit(main())
