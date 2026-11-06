@@ -16,7 +16,7 @@ const ITENS = ["queijo", "meia", "bilhete", "moeda", "flor"];
 const FOLHAS = [
   // o alarme
   ...["acerto", "cansado", "correndo", "correndo-baixo", "correndo-baixo-lado", "correndo-cima", "correndo-cima-lado",
-    "dormindo", "fuga", "pego", "sumindo"].map((n) => [`rato-${n}`, `critters/rato-${n}`]),
+    "dormindo", "fuga", "pego", "reclamando", "sumindo"].map((n) => [`rato-${n}`, `critters/rato-${n}`]),
   // o pet
   ...["sentado", "falando", "placa", "acenando", "comendo", "feliz", "cochilando", "andando", "puxando", "surgindo"]
     .map((n) => [`rato-${n}`, `critters/rato-${n}`]),

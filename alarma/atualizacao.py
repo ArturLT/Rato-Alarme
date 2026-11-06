@@ -1,15 +1,23 @@
 """Procura versão nova nos Releases do GitHub. Sem internet, fica tudo como está."""
 
+import hashlib
+import http.client
 import json
+import shutil
 import ssl
 import urllib.request
+from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 
+from alarma.caminhos import pasta_estado
 from alarma.versao import VERSAO
 
 REPOSITORIO = "ArturLT/Rato-Alarme"
 URL_ULTIMA = f"https://api.github.com/repos/{REPOSITORIO}/releases/latest"
 ESPERA_S = 10
+BLOCO = 256 * 1024
+ERROS_DE_DOWNLOAD = (OSError, ValueError, http.client.HTTPException)
 
 
 @dataclass(frozen=True)
@@ -17,6 +25,7 @@ class Lancamento:
     versao: str
     pagina: str
     download: str | None
+    resumo: str | None = None
 
 
 def numeros(versao: object) -> tuple[int, ...] | None:
@@ -52,15 +61,17 @@ def interpretar(dados: object, atual: str, sistema: str, maquina: str) -> Lancam
         return None
     instalador = nome_do_instalador(sistema, maquina)
     ativos = dados.get("assets")
-    download = next(
+    ativo = next(
         (
-            ativo.get("browser_download_url")
+            ativo
             for ativo in (ativos if isinstance(ativos, list) else [])
             if isinstance(ativo, dict) and ativo.get("name") == instalador
         ),
-        None,
+        {},
     )
-    return Lancamento(tag.removeprefix("v"), pagina, download)
+    return Lancamento(
+        tag.removeprefix("v"), pagina, ativo.get("browser_download_url"), ativo.get("digest")
+    )
 
 
 def _contexto_tls() -> ssl.SSLContext:
@@ -86,3 +97,42 @@ def buscar(sistema: str, maquina: str) -> Lancamento | None:
     except (OSError, ValueError):
         return None
     return interpretar(dados, VERSAO, sistema, maquina)
+
+
+def pasta_do_instalador() -> Path:
+    return pasta_estado() / "instalador"
+
+
+def limpar() -> None:
+    """Apaga o instalador da atualização anterior."""
+    shutil.rmtree(pasta_do_instalador(), ignore_errors=True)
+
+
+def baixar(lancamento: Lancamento, destino: Path, progresso: Callable[[int], None]) -> None:
+    """Só deixa o arquivo em `destino` se o resumo bater com o publicado no GitHub."""
+    if not lancamento.download or not lancamento.resumo:
+        raise ValueError("lançamento sem instalador conferível")
+    pedido = urllib.request.Request(
+        lancamento.download, headers={"User-Agent": f"Rato-Alarme/{VERSAO}"}
+    )
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    parcial = destino.with_name(destino.name + ".parcial")
+    resumo = hashlib.sha256()
+    try:
+        with (
+            urllib.request.urlopen(pedido, timeout=ESPERA_S, context=_contexto_tls()) as resposta,
+            parcial.open("wb") as arquivo,
+        ):
+            total = int(resposta.headers.get("Content-Length") or 0)
+            feito = 0
+            while bloco := resposta.read(BLOCO):
+                arquivo.write(bloco)
+                resumo.update(bloco)
+                feito += len(bloco)
+                if total:
+                    progresso(min(100, feito * 100 // total))
+        if f"sha256:{resumo.hexdigest()}" != lancamento.resumo:
+            raise ValueError("instalador diferente do publicado")
+        parcial.replace(destino)
+    finally:
+        parcial.unlink(missing_ok=True)

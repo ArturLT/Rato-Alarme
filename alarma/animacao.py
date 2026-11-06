@@ -22,6 +22,7 @@ CORRENDO_BAIXO = "correndo-baixo"
 CORRENDO_CIMA_LADO = "correndo-cima-lado"
 CORRENDO_BAIXO_LADO = "correndo-baixo-lado"
 CANSADO = "cansado"
+FALANDO = "reclamando"
 ACERTO = "acerto"
 PEGO = "pego"
 SUMINDO = "sumindo"
@@ -34,6 +35,7 @@ NOMES = (
     CORRENDO_CIMA_LADO,
     CORRENDO_BAIXO_LADO,
     CANSADO,
+    FALANDO,
     ACERTO,
     PEGO,
     SUMINDO,
@@ -84,11 +86,19 @@ def depois_de_pego(segundos: float) -> str | None:
     return None
 
 
-def escolher(fase: str | None, cansado: bool, em_acerto: bool, depois: str | None) -> str:
+def escolher(
+    fase: str | None,
+    cansado: bool,
+    em_acerto: bool,
+    depois: str | None,
+    falando: bool = False,
+) -> str:
     if fase is None or fase == Fase.PEGO:
         return depois or DORMINDO
     if fase == Fase.GAIOLA:
         return FUGA
     if em_acerto:
         return ACERTO
+    if falando:
+        return FALANDO
     return CANSADO if cansado else CORRENDO
