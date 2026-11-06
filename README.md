@@ -11,7 +11,9 @@ Precisa do Windows 10 ou 11 de 64 bits. Não precisa de administrador.
 1. Baixe `Rato-Alarme-Windows.exe` na [página de versões](https://github.com/ArturLT/Rato-Alarme/releases/latest).
 2. Abra o arquivo.
 3. Se aparecer o aviso "O Windows protegeu o computador", clique em **Mais informações** e depois em **Executar assim mesmo**. O aviso aparece porque o app não tem assinatura digital.
-4. Siga o instalador.
+4. Siga o instalador. Ele sugere uma pasta, e você pode clicar em **Procurar** para escolher outra. Use uma pasta em que sua conta possa gravar: `Arquivos de Programas`, por exemplo, exige administrador.
+
+As atualizações usam a mesma pasta. Para trocar de pasta depois, desinstale e instale de novo. Seus horários continuam salvos.
 
 O ícone do rato fica na bandeja, perto do relógio. Se não aparecer, clique na setinha **^** ao lado do relógio.
 
@@ -24,7 +26,7 @@ Precisa do macOS 14 (Sonoma) ou mais novo.
    - Processador Intel: `Rato-Alarme-macOS-Intel.dmg`
 
    Para saber qual é o seu, abra o menu  > **Sobre Este Mac**.
-2. Abra o arquivo e arraste o Rato-Alarme para a pasta **Aplicativos**.
+2. Abra o arquivo e arraste o Rato-Alarme para a pasta **Aplicativos** ou para outra pasta do Mac. Não abra o app direto do arquivo baixado.
 3. Abra o Rato-Alarme. O macOS vai bloquear, porque o app não tem assinatura digital.
 4. Vá em **Ajustes do Sistema > Privacidade e Segurança**, role até o aviso do Rato-Alarme e clique em **Abrir Mesmo Assim**.
 
@@ -61,7 +63,7 @@ No Linux com Hyprland, ele também mexe e fecha janelas de outros programas. Iss
 
 No Windows, um clique no ícone abre o painel, e o botão direito abre o menu. No macOS, um clique abre o menu.
 
-Para ligar de novo depois de sair, abra o Rato-Alarme pelo menu Iniciar ou pela pasta **Aplicativos**. Abrir o app com ele já rodando mostra o painel.
+Para ligar de novo depois de sair, abra o Rato-Alarme pelo menu Iniciar ou pela pasta onde ele está no Mac. Abrir o app com ele já rodando mostra o painel.
 
 ## Atualizar
 
@@ -71,7 +73,7 @@ Se clicar em **Depois**, a opção **Atualizar para a versão X** fica no menu d
 
 Quem está na versão 1.0.0 precisa instalar a versão seguinte à mão, pelo instalador do [Release](https://github.com/ArturLT/Rato-Alarme/releases/latest). Depois disso as atualizações são automáticas.
 
-No Mac, a atualização automática precisa do app na pasta **Aplicativos** e de uma conta com permissão de escrita nela. Sem isso, o instalador abre no navegador. No Linux, também dá para rodar `./atualizar.sh`.
+No Mac, a atualização automática precisa de uma conta com permissão de escrita na pasta onde o app está. Sem isso, o instalador abre no navegador. No Linux, também dá para rodar `./atualizar.sh`.
 
 Para isso, o programa consulta o GitHub de tempos em tempos. Ele não envia seus horários nem dados pessoais.
 
@@ -87,7 +89,7 @@ Para isso, o programa consulta o GitHub de tempos em tempos. Ele não envia seus
 
 **Windows:** clique em **Sair** no menu do ícone. Depois, vá em **Configurações > Aplicativos > Aplicativos instalados** e desinstale o Rato-Alarme. Seus horários ficam em `%APPDATA%\alarma-meme`, e a pasta pode ser apagada à mão.
 
-**macOS:** desmarque **Iniciar com o computador** no painel, clique em **Salvar** e depois em **Sair**. Apague o app da pasta **Aplicativos**. Seus horários ficam em `~/Library/Application Support/alarma-meme`, e a pasta pode ser apagada à mão.
+**macOS:** desmarque **Iniciar com o computador** no painel, clique em **Salvar** e depois em **Sair**. Apague o app da pasta onde ele está. Seus horários ficam em `~/Library/Application Support/alarma-meme`, e a pasta pode ser apagada à mão.
 
 ## Linux
 
@@ -99,7 +101,7 @@ cd Rato-Alarme
 ./instalar.sh
 ```
 
-As dependências ficam em `.venv`, dentro da pasta. Se você instalar entre a entrada e a saída, ou até 1 hora depois da saída, o alarme toca na hora. Para evitar isso, use `./instalar.sh --sem-iniciar`, e ele começa só no próximo boot.
+O programa fica na pasta em que você rodar o `git clone`, então escolha o local antes. As dependências ficam em `.venv`, dentro dela. Se você instalar entre a entrada e a saída, ou até 1 hora depois da saída, o alarme toca na hora. Para evitar isso, use `./instalar.sh --sem-iniciar`, e ele começa só no próximo boot.
 
 Não mova a pasta depois de instalar. Se mover, rode `./instalar.sh` de novo.
 
