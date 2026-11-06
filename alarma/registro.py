@@ -1,0 +1,39 @@
+"""Lembra o que já aconteceu em cada alarme, mesmo se a criatura reiniciar."""
+
+import json
+import os
+from pathlib import Path
+
+
+def caminho_padrao() -> Path:
+    base = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local/state")
+    return Path(base) / "alarma-meme" / "registro.json"
+
+
+class Registro:
+    """Com caminho None, guarda só na memória (usado no modo demo)."""
+
+    def __init__(self, caminho: Path | None) -> None:
+        self._caminho = caminho
+        self._dados: dict[str, list[str]] = {}
+        if caminho is not None and caminho.exists():
+            try:
+                self._dados = json.loads(caminho.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                self._dados = {}
+
+    def tem(self, dia: str, alarme: str, evento: str) -> bool:
+        return evento in self._dados.get(f"{dia}/{alarme}", [])
+
+    def marcar(self, dia: str, alarme: str, evento: str) -> None:
+        chave = f"{dia}/{alarme}"
+        self._dados = {
+            k: v for k, v in self._dados.items() if k.startswith(f"{dia}/")
+        }
+        self._dados.setdefault(chave, []).append(evento)
+        if self._caminho is None:
+            return
+        self._caminho.parent.mkdir(parents=True, exist_ok=True)
+        temporario = self._caminho.with_suffix(".tmp")
+        temporario.write_text(json.dumps(self._dados), encoding="utf-8")
+        temporario.replace(self._caminho)
