@@ -8,7 +8,7 @@ CLIQUES = 3
 FUGA_S = 3.0
 CANSADO_S = 1.5
 RAIO_MEDO = 260.0
-VEL_FUGA = 450.0
+VEL_FUGA = 250.0
 VEL_PASSEIO = 125.0
 INTERVALO_TRAVESSURA = 20.0
 LADO_RATO = 96
@@ -171,10 +171,13 @@ class Caca:
         if self._restante <= 0:
             self._planejar(agora, medo, limites)
         elif medo is not None:
-            self._velocidade = VEL_FUGA
             indo_para_o_cursor = vetor[0] * medo[0] + vetor[1] * medo[1] < 0
-            if indo_para_o_cursor and agora - self._desde >= COMPROMISSO_S:
+            ja_fugia = self._velocidade == VEL_FUGA
+            if indo_para_o_cursor and (
+                not ja_fugia or agora - self._desde >= COMPROMISSO_S
+            ):
                 self._planejar(agora, medo, limites)
+            self._velocidade = VEL_FUGA
 
         vetor = DIRECOES[self.direcao]
         anda = min(self._restante, self._velocidade * dt, self._folga(vetor, limites))

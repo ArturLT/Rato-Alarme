@@ -9,11 +9,15 @@ from alarma.animacao import (
     CORRIDA,
     DORMINDO,
     DUR_PEGO,
+    DUR_SUMINDO,
+    ESPERA_SUMIR,
     FUGA,
     NOMES,
     PEGO,
+    SUMINDO,
     Clipe,
     clipe_da_folha,
+    depois_de_pego,
     escolher,
 )
 from alarma.caca import DIRECOES, DUR_GAIOLA, Fase
@@ -27,12 +31,19 @@ def folha(nome: str) -> dict:
 
 class TestAnimacao(unittest.TestCase):
     def test_escolha_por_estado(self) -> None:
-        self.assertEqual(escolher(None, False, False, False), DORMINDO)
-        self.assertEqual(escolher(None, False, False, True), PEGO)
-        self.assertEqual(escolher(Fase.GAIOLA, False, False, False), FUGA)
-        self.assertEqual(escolher(Fase.SOLTO, False, False, False), CORRENDO)
-        self.assertEqual(escolher(Fase.SOLTO, True, False, False), CANSADO)
-        self.assertEqual(escolher(Fase.SOLTO, True, True, False), ACERTO)
+        self.assertEqual(escolher(None, False, False, None), DORMINDO)
+        self.assertEqual(escolher(None, False, False, PEGO), PEGO)
+        self.assertEqual(escolher(None, False, False, SUMINDO), SUMINDO)
+        self.assertEqual(escolher(Fase.GAIOLA, False, False, None), FUGA)
+        self.assertEqual(escolher(Fase.SOLTO, False, False, None), CORRENDO)
+        self.assertEqual(escolher(Fase.SOLTO, True, False, None), CANSADO)
+        self.assertEqual(escolher(Fase.SOLTO, True, True, None), ACERTO)
+
+    def test_some_um_tempo_depois_de_pego(self) -> None:
+        self.assertEqual(depois_de_pego(0.5), PEGO)
+        self.assertEqual(depois_de_pego(DUR_PEGO + 1), DORMINDO)
+        self.assertEqual(depois_de_pego(DUR_PEGO + ESPERA_SUMIR + 0.2), SUMINDO)
+        self.assertIsNone(depois_de_pego(DUR_PEGO + ESPERA_SUMIR + DUR_SUMINDO))
 
     def test_toda_direcao_tem_animacao(self) -> None:
         self.assertEqual(set(CORRIDA), set(DIRECOES))

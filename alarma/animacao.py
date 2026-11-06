@@ -24,6 +24,7 @@ CORRENDO_BAIXO_LADO = "correndo-baixo-lado"
 CANSADO = "cansado"
 ACERTO = "acerto"
 PEGO = "pego"
+SUMINDO = "sumindo"
 NOMES = (
     DORMINDO,
     FUGA,
@@ -35,6 +36,7 @@ NOMES = (
     CANSADO,
     ACERTO,
     PEGO,
+    SUMINDO,
 )
 # Direção → (animação, espelhada). O lado esquerdo é o direito espelhado.
 CORRIDA = {
@@ -49,6 +51,8 @@ CORRIDA = {
 }
 DUR_ACERTO = 0.45
 DUR_PEGO = 1.9
+ESPERA_SUMIR = 3.0
+DUR_SUMINDO = 1.1
 
 
 @dataclass(frozen=True)
@@ -69,9 +73,20 @@ def clipe_da_folha(meta: dict) -> Clipe:
     return Clipe(quadros, dados["fps"], dados["loop"])
 
 
-def escolher(fase: str | None, cansado: bool, em_acerto: bool, em_pego: bool) -> str:
+def depois_de_pego(segundos: float) -> str | None:
+    """O que mostrar depois da captura. None quer dizer que o rato já sumiu."""
+    if segundos < DUR_PEGO:
+        return PEGO
+    if segundos < DUR_PEGO + ESPERA_SUMIR:
+        return DORMINDO
+    if segundos < DUR_PEGO + ESPERA_SUMIR + DUR_SUMINDO:
+        return SUMINDO
+    return None
+
+
+def escolher(fase: str | None, cansado: bool, em_acerto: bool, depois: str | None) -> str:
     if fase is None or fase == Fase.PEGO:
-        return PEGO if em_pego else DORMINDO
+        return depois or DORMINDO
     if fase == Fase.GAIOLA:
         return FUGA
     if em_acerto:

@@ -12,7 +12,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gdk, GLib, Gtk
 
 from alarma import hypr, sprites, travessuras
-from alarma.animacao import CORRENDO, CORRIDA, DUR_ACERTO, DUR_PEGO, escolher
+from alarma.animacao import CORRENDO, CORRIDA, DUR_ACERTO, depois_de_pego, escolher
 from alarma.boot import ler_boot
 from alarma.caca import JANELAS, LADO_RATO, NOTAS, YOUTUBE, Caca, Fase
 from alarma.logica import Alarme, Decisao, decidir
@@ -49,7 +49,10 @@ class Criatura(Gtk.Application):
         self._nome_atual = ""
         self._inicio_clipe = 0.0
         self._acerto_ate = 0.0
-        self._pego_ate = 0.0
+        self._capturado_em: float | None = None
+        self._oculto = self.decisao.ativo and self._registro.tem(
+            self._dia, self.decisao.alarme, PEGO
+        )
         self._endereco: str | None = None
         self._area = AREA_RESERVA
         self._notas: Gtk.Window | None = None
@@ -66,7 +69,8 @@ class Criatura(Gtk.Application):
 
     def do_activate(self) -> None:
         if self._janela is not None:
-            self._janela.present()
+            if not self._oculto:
+                self._janela.present()
             return
 
         css = Gtk.CssProvider()
@@ -97,7 +101,8 @@ class Criatura(Gtk.Application):
         self._animacoes = sprites.carregar(LADO_RATO)
         self._sincronizar()
         self._quadro()
-        janela.present()
+        if not self._oculto:
+            janela.present()
 
         GLib.timeout_add(QUADRO_MS, self._quadro)
         GLib.timeout_add(700, self._bip_inicial)
@@ -115,6 +120,7 @@ class Criatura(Gtk.Application):
         if pendente and self._caca is None:
             feito = self._registro.tem(self._dia, alarme, YOUTUBE)
             self._caca = Caca(self._acaso, time.monotonic(), youtube_feito=feito)
+            self._mostrar()
         elif not pendente:
             self._encerrar()
 
@@ -124,16 +130,37 @@ class Criatura(Gtk.Application):
             self._notas.destroy()
             self._notas = None
 
+    def _mostrar(self) -> None:
+        self._capturado_em = None
+        if self._oculto and self._janela is not None:
+            self._oculto = False
+            self._endereco = None
+            self._janela.present()
+
+    def _esconder(self) -> None:
+        """Some da tela até o próximo alarme. O processo continua vivo."""
+        self._oculto = True
+        self._endereco = None
+        if self._janela is not None:
+            self._janela.set_visible(False)
+
     def _quadro(self) -> bool:
-        if self._imagem is None:
+        if self._imagem is None or self._oculto:
             return True
         agora = time.monotonic()
         caca = self._caca
+        depois = None
+        if self._capturado_em is not None:
+            depois = depois_de_pego(agora - self._capturado_em)
+            if depois is None:
+                self._capturado_em = None
+                self._esconder()
+                return True
         nome = escolher(
             caca.fase if caca else None,
             caca.cansado(agora) if caca else False,
             agora < self._acerto_ate,
-            agora < self._pego_ate,
+            depois,
         )
         virado = bool(caca and caca.esquerda)
         if nome == CORRENDO and caca:
@@ -155,7 +182,7 @@ class Criatura(Gtk.Application):
             self._acerto_ate = agora + DUR_ACERTO
             self._nome_atual = ""
             return
-        self._pego_ate = agora + DUR_PEGO
+        self._capturado_em = agora
         self._registro.marcar(self._dia, self.decisao.alarme, PEGO)
         self._encerrar()
 
@@ -173,6 +200,8 @@ class Criatura(Gtk.Application):
         return True
 
     def _passo(self) -> bool:
+        if self._oculto:
+            return True
         if self._endereco is None:
             self._endereco = hypr.endereco(os.getpid(), TITULO)
             if self._endereco is None:

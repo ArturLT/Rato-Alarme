@@ -40,7 +40,7 @@ export function galope(fase) {
  */
 export function rato(p, cor, Z = {}) {
   const { C, K } = cor, g = GRID;
-  const { x = 0, y = 0, rot = 0, sq = 0, pes = PARADO, olho = "aberto", boca = 0, cabeca = [0, 0], orelha = 0 } = Z;
+  const { x = 0, y = 0, rot = 0, sq = 0, pes = PARADO, olho = "aberto", boca = 0, cabeca = [0, 0], orelha = 0, fade = 1 } = Z;
   const pontos = Z.cauda ?? cauda();
   const cs = Math.cos(rot), sn = Math.sin(rot), sx = 1 - sq * 0.6, sy = 1 + sq;
   const hx = 8 + cabeca[0], hy = -9 + cabeca[1];
@@ -98,11 +98,11 @@ export function rato(p, cor, Z = {}) {
     g.set(nx - 3, ny + 4, K[2]); g.set(nx - 2, ny + 4, K[1]);
   }
   g.outline(C[0]);
-  g.draw(p, 1, Math.round(x), Math.round(y));
+  g.draw(p, fade, Math.round(x), Math.round(y));
   // bigodes por cima do contorno
   const bx = Math.round(x) + nx - 2, by = Math.round(y) + ny + 1;
-  p.line(bx, by, bx + 5, by - 2, C[5]);
-  p.line(bx, by + 1, bx + 5, by + 2, C[5]);
+  p.line(bx, by, bx + 5, by - 2, C[5], fade);
+  p.line(bx, by + 1, bx + 5, by + 2, C[5], fade);
 }
 
 const TOPO = (x) => -29 - 8 * Math.sqrt(Math.max(0, 1 - (x / 21) ** 2));

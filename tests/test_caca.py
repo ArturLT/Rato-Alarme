@@ -57,7 +57,7 @@ class TestCaca(unittest.TestCase):
         for _ in range(8):
             agora += 0.1
             caca.passo(agora, cursor, AREA)
-        self.assertGreater(math.dist((caca.x, caca.y), cursor), antes + 200)
+        self.assertGreater(math.dist((caca.x, caca.y), cursor), max(antes, 200))
 
     def test_para_quando_cansa(self) -> None:
         caca = solto()
