@@ -14,8 +14,8 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
 
-from alarma import atualizacao, config, sprites
-from alarma.animacao import NOMES
+from alarma import atualizacao, balao, config, falas, sprites
+from alarma.animacao import FALANDO, NOMES
 from alarma.bandeja import Bandeja
 from alarma.caca import CLIQUES, FECHAR, JANELAS, LADO_RATO, Fase
 from alarma.criatura import Criatura
@@ -57,6 +57,79 @@ class TestSprites(Base):
         self.assertEqual(direita.pixelColor(0, 0).alpha(), 0)
         for x, y in ((40, 100), (98, 98), (150, 120)):
             self.assertEqual(direita.pixel(x, y), esquerda.pixel(LADO_RATO - 1 - x, y))
+
+
+class TestBalao(Base):
+    AREA = (0, 0, 1920, 1080)
+
+    def _balao(self) -> balao.Balao:
+        janela = balao.Balao()
+        self.addCleanup(janela.close)
+        return janela
+
+    def test_fica_sobre_a_cabeca_e_a_ponta_acha_a_boca(self) -> None:
+        onde = balao.lugar(800, 500, False, self.AREA)
+        self.assertTrue(onde.acima)
+        self.assertLess(onde.y, 500 + LADO_RATO)
+        boca = 800 + round(LADO_RATO * balao.BOCA_X)
+        self.assertEqual(onde.x + onde.ponta, boca)
+        espelhado = balao.lugar(800, 500, True, self.AREA)
+        self.assertEqual(espelhado.x + espelhado.ponta, 800 + LADO_RATO - round(LADO_RATO * balao.BOCA_X))
+
+    def test_nunca_sai_da_tela(self) -> None:
+        x0, y0, x1, y1 = self.AREA
+        for rato_x in (x0, 900, x1 - LADO_RATO):
+            for rato_y in (y0, 500, y1 - LADO_RATO):
+                for esquerda in (False, True):
+                    onde = balao.lugar(rato_x, rato_y, esquerda, self.AREA)
+                    self.assertGreaterEqual(onde.x, x0)
+                    self.assertLessEqual(onde.x + balao.LARGURA, x1)
+                    self.assertGreaterEqual(onde.y, y0)
+                    self.assertLessEqual(onde.y + balao.ALTURA, y1)
+
+    def test_sem_espaco_em_cima_vai_para_baixo_do_rato(self) -> None:
+        onde = balao.lugar(800, 0, False, self.AREA)
+        self.assertFalse(onde.acima)
+        self.assertGreaterEqual(onde.y, LADO_RATO)
+
+    def test_toda_frase_cabe_na_caixa_mesmo_com_o_maior_atraso(self) -> None:
+        janela = self._balao()
+        medidas = janela.fontMetrics()
+        largura = balao.LARGURA - 2 * balao.RESPIRO
+        frases = list(falas.COMPUTADOR)
+        for alarme in (Alarme.MANHA, Alarme.TARDE):
+            frases += falas.pontualidade(alarme, 11 * 60 + 59)
+        cabem = (balao.ALTURA - balao.PONTA - 2 * balao.BORDA) // medidas.lineSpacing()
+        for frase in frases:
+            linhas = balao.quebrar(frase, medidas, largura)
+            self.assertEqual(" ".join(linhas), frase)
+            self.assertLessEqual(len(linhas), cabem, frase)
+            for linha in linhas:
+                self.assertLessEqual(medidas.horizontalAdvance(linha), largura, linha)
+
+    def test_escreve_aos_poucos_e_nao_recebe_clique(self) -> None:
+        janela = self._balao()
+        self.assertTrue(janela.windowFlags() & Qt.WindowType.WindowTransparentForInput)
+        self.assertFalse(janela.aberto)
+        janela.dizer("oi rato", balao.lugar(800, 500, False, self.AREA))
+        self.assertTrue(janela.aberto and janela.digitando)
+        for _ in range(len("oi rato")):
+            janela._escrever()
+        self.assertFalse(janela.digitando)
+        janela.calar()
+        self.assertFalse(janela.aberto)
+
+    def test_desenha_a_caixa_so_quando_ha_fala(self) -> None:
+        janela = self._balao()
+        janela.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+        vazio = janela.grab().toImage()
+        for acima_y in (500, 0):
+            janela.dizer("reclamação", balao.lugar(800, acima_y, False, self.AREA))
+            janela._letras = 5
+            imagem = janela.grab().toImage()
+            self.assertNotEqual(imagem, vazio)
+            corpo = janela._corpo()
+            self.assertEqual(imagem.pixelColor(corpo.right() - 8, corpo.center().y()), balao.CLARO)
 
 
 class TestPainel(Base):
@@ -116,6 +189,8 @@ class TestCriatura(Base):
     def _parar(self, criatura: Criatura) -> None:
         for relogio in criatura._relogios:
             relogio.stop()
+        criatura._balao.calar()
+        criatura._balao.hide()
         criatura._janela.hide()
 
     def test_fora_do_horario_o_rato_fica_escondido(self) -> None:
@@ -127,6 +202,54 @@ class TestCriatura(Base):
         self.assertTrue(criatura._janela.isVisible())
         self.assertIsInstance(criatura._janela.pixmap(), QPixmap)
         self.assertFalse(criatura._janela.pixmap().isNull())
+
+    def _solto_e_pronto(self) -> Criatura:
+        criatura = self._criatura(solto=True)
+        criatura._caca.fase = Fase.SOLTO
+        criatura._caca.x, criatura._caca.y = 800.0, 500.0
+        return criatura
+
+    def test_fala_para_o_rato_abre_o_balao_e_depois_fecha(self) -> None:
+        criatura = self._solto_e_pronto()
+        caca = criatura._caca
+        inicio = caca._proxima_fala
+        criatura._falar(inicio)
+        self.assertTrue(criatura._balao.aberto)
+        self.assertTrue(caca.falando(inicio))
+        self.assertTrue(criatura._ultima_fala)
+        criatura._falar(caca._fala_ate + 0.1)
+        self.assertFalse(criatura._balao.aberto)
+
+    def test_animacao_de_fala_mexe_a_boca_so_enquanto_escreve(self) -> None:
+        criatura = self._solto_e_pronto()
+        with mock.patch("alarma.criatura.time.monotonic", return_value=criatura._caca._proxima_fala + 0.15):
+            criatura._falar(criatura._caca._proxima_fala)
+            criatura._quadro()
+            self.assertEqual(criatura._nome_atual, FALANDO)
+            criatura._balao._relogio.stop()
+            criatura._quadro()
+        fechada = criatura._animacoes[FALANDO].direita[0].toImage()
+        self.assertEqual(criatura._janela.pixmap().toImage(), fechada)
+
+    def test_clique_cala_o_rato_e_conta_acerto(self) -> None:
+        criatura = self._solto_e_pronto()
+        caca = criatura._caca
+        criatura._falar(caca._proxima_fala)
+        criatura._clicado()
+        self.assertFalse(criatura._balao.aberto)
+        self.assertEqual(caca.cliques, 1)
+
+    def test_pegar_o_rato_e_o_fim_do_alarme_calam_o_balao(self) -> None:
+        criatura = self._solto_e_pronto()
+        criatura._falar(criatura._caca._proxima_fala)
+        criatura._encerrar()
+        self.assertFalse(criatura._balao.aberto)
+
+    def test_balao_some_junto_com_o_rato(self) -> None:
+        criatura = self._criatura(solto=True)
+        self.assertTrue(criatura._balao.isVisible())
+        criatura._esconder()
+        self.assertFalse(criatura._balao.isVisible())
 
     def test_tres_cliques_pegam_o_rato(self) -> None:
         criatura = self._criatura(solto=True)

@@ -42,7 +42,7 @@ Depois disso, o rato inicia junto com o computador e fica escondido até o próx
 
 ## Como funciona
 
-O rato aparece no horário e foge do cursor. De tempos em tempos ele cansa e para, e fica mais fácil clicar. São 3 cliques para pegar.
+O rato aparece no horário e foge do cursor. De tempos em tempos ele cansa e para, e fica mais fácil clicar. Ele também para de correr para reclamar do computador e do seu atraso em um balão de fala. Um clique nessa hora conta como acerto, interrompe a fala e ele volta a fugir. São 3 cliques para pegar.
 
 Enquanto está solto, ele pode:
 

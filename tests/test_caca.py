@@ -3,6 +3,8 @@ import random
 import unittest
 
 from alarma.caca import (
+    INTERVALO_FALA,
+    PRIMEIRA_FALA_S,
     CLIQUES,
     DIRECOES,
     DUR_GAIOLA,
@@ -189,6 +191,59 @@ class TestCaca(unittest.TestCase):
     def test_sem_travessura_antes_da_hora(self) -> None:
         caca = solto()
         self.assertIsNone(caca.travessura(DUR_GAIOLA + 1))
+
+
+class TestFala(unittest.TestCase):
+    AREA = (0, 0, 1920, 1080)
+
+    def _solta(self) -> Caca:
+        caca = Caca(random.Random(1), 0.0)
+        caca.passo(0.0, None, self.AREA)
+        caca.passo(DUR_GAIOLA, None, self.AREA)
+        return caca
+
+    def test_so_quer_falar_solto_e_depois_da_espera(self) -> None:
+        caca = Caca(random.Random(1), 0.0)
+        self.assertFalse(caca.quer_falar(DUR_GAIOLA + PRIMEIRA_FALA_S))
+        caca = self._solta()
+        self.assertFalse(caca.quer_falar(DUR_GAIOLA + PRIMEIRA_FALA_S - 0.1))
+        self.assertTrue(caca.quer_falar(DUR_GAIOLA + PRIMEIRA_FALA_S))
+
+    def test_nao_fala_cansado(self) -> None:
+        caca = self._solta()
+        cansado = DUR_GAIOLA + FUGA_S + 0.5
+        self.assertTrue(caca.cansado(cansado))
+        caca._proxima_fala = cansado
+        self.assertFalse(caca.quer_falar(cansado))
+
+    def test_parado_enquanto_fala_mesmo_com_cursor_perto(self) -> None:
+        caca = self._solta()
+        agora = DUR_GAIOLA + PRIMEIRA_FALA_S
+        caca.passo(agora, None, self.AREA)
+        caca.falar(agora, 5.0)
+        cursor = (round(caca.x) + 100, round(caca.y) + 100)
+        self.assertIsNone(caca.passo(agora + 1, cursor, self.AREA))
+        self.assertFalse(caca.quer_falar(agora + 1))
+
+    def test_depois_da_fala_corre_um_ciclo_inteiro_e_espera_para_falar_de_novo(self) -> None:
+        caca = self._solta()
+        agora = DUR_GAIOLA + PRIMEIRA_FALA_S
+        caca.falar(agora, 5.0)
+        fim = agora + 5.0
+        self.assertFalse(caca.falando(fim))
+        self.assertFalse(caca.cansado(fim))
+        self.assertIsNotNone(caca.passo(fim + 0.1, None, self.AREA))
+        self.assertFalse(caca.quer_falar(fim + INTERVALO_FALA - 0.1))
+        self.assertTrue(caca.quer_falar(fim + INTERVALO_FALA))
+
+    def test_clique_interrompe_a_fala_e_ele_volta_a_correr(self) -> None:
+        caca = self._solta()
+        agora = DUR_GAIOLA + PRIMEIRA_FALA_S
+        caca.falar(agora, 5.0)
+        caca.clique(agora + 1)
+        self.assertFalse(caca.falando(agora + 1))
+        self.assertEqual(caca.cliques, 1)
+        self.assertIsNotNone(caca.passo(agora + 1.1, None, self.AREA))
 
 
 if __name__ == "__main__":
