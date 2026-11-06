@@ -28,6 +28,7 @@ class Instancia(QObject):
             if avisar:
                 outra.write(b"painel\n")
                 outra.waitForBytesWritten(ESPERA_MS)
+                outra.waitForDisconnected(ESPERA_MS)  # a primeira fecha quando recebe
             outra.disconnectFromServer()
             return False
         QLocalServer.removeServer(self._nome)
@@ -40,7 +41,9 @@ class Instancia(QObject):
         conexao = self._servidor.nextPendingConnection()
         conexao.readyRead.connect(lambda: self._mensagem(conexao))
         conexao.disconnected.connect(conexao.deleteLater)
+        self._mensagem(conexao)  # a mensagem pode ter chegado antes do sinal ser ligado
 
     def _mensagem(self, conexao: QLocalSocket) -> None:
         if bytes(conexao.readAll()):
+            conexao.disconnectFromServer()
             self.pedido.emit()

@@ -185,8 +185,8 @@ class TestInstanciaUnica(Base):
         pedidos = []
         primeira.pedido.connect(lambda: pedidos.append(1))
         self.assertFalse(Instancia(nome).assumir(avisar=True))
-        for _ in range(50):
-            app.processEvents()
+        for _ in range(150):
+            QTest.qWait(20)
             if pedidos:
                 break
         self.assertEqual(pedidos, [1])
@@ -198,8 +198,7 @@ class TestInstanciaUnica(Base):
         pedidos = []
         primeira.pedido.connect(lambda: pedidos.append(1))
         self.assertFalse(Instancia(nome).assumir(avisar=False))
-        for _ in range(20):
-            app.processEvents()
+        QTest.qWait(200)
         self.assertEqual(pedidos, [])
 
 
