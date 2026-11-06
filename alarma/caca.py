@@ -19,6 +19,9 @@ COMPROMISSO_S = 0.6
 NOTAS = "notas"
 YOUTUBE = "youtube"
 JANELAS = "janelas"
+FECHAR = "fechar"
+MUDO = "mudo"
+TRAVESSURAS = (NOTAS, YOUTUBE, JANELAS, FECHAR, MUDO)
 
 DIREITA = "direita"
 ESQUERDA = "esquerda"
@@ -58,7 +61,7 @@ class Caca:
         self._inicio = inicio
         self._ciclo = inicio + DUR_GAIOLA
         self._proxima = inicio + DUR_GAIOLA + INTERVALO_TRAVESSURA
-        self._fila = [NOTAS, JANELAS] if youtube_feito else [NOTAS, YOUTUBE, JANELAS]
+        self._opcoes = [t for t in TRAVESSURAS if t != YOUTUBE or not youtube_feito]
         self._restante = 0.0
         self._velocidade = VEL_PASSEIO
         self._desde = inicio
@@ -189,11 +192,11 @@ class Caca:
         return round(self.x), round(self.y)
 
     def travessura(self, agora: float) -> str | None:
-        """Retorna a travessura da vez, ou None se ainda não chegou a hora."""
+        """Sorteia a travessura da vez, ou None se ainda não chegou a hora."""
         if self.fase != Fase.SOLTO or agora < self._proxima:
             return None
         self._proxima = agora + INTERVALO_TRAVESSURA
-        escolhida = self._fila.pop(0)
-        if escolhida != YOUTUBE:
-            self._fila.append(escolhida)
+        escolhida = self._acaso.choice(self._opcoes)
+        if escolhida == YOUTUBE:
+            self._opcoes.remove(YOUTUBE)
         return escolhida

@@ -3,8 +3,8 @@
 O computador precisa estar ligado. A hora local em que ele ligou, no dia
 de hoje, escolhe o alarme:
 
-- 13:00 ou depois → tarde
-- 06:50 até 12:59 → manhã
+- 12:49 ou depois → tarde
+- 06:50 até 12:48 → manhã
 - antes das 06:50, ou ligado em outro dia → nenhum
 
 Quando a hora do boot passa dos dois limiares, vale o da tarde.
@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from datetime import datetime, time, tzinfo
 
 LIMIAR_MANHA = time(6, 50)
+# Antes das 13:00 de propósito: desligar o computador antes do ponto faria o alarme falhar.
 LIMIAR_TARDE = time(12, 49)
 
 
@@ -73,7 +74,7 @@ def descrever(decisao: Decisao) -> str:
     if decisao.alarme == Alarme.MANHA:
         estado = "alarme da manhã (06:50)"
     elif decisao.alarme == Alarme.TARDE:
-        estado = "alarme da tarde (13:00)"
+        estado = "alarme da tarde (12:49)"
     else:
         estado = "nenhum alarme"
     ligado = "ligado" if decisao.ligado else "desligado"

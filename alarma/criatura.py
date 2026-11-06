@@ -14,7 +14,7 @@ from gi.repository import Gdk, GLib, Gtk
 from alarma import hypr, sprites, travessuras
 from alarma.animacao import CORRENDO, CORRIDA, DUR_ACERTO, depois_de_pego, escolher
 from alarma.boot import ler_boot
-from alarma.caca import JANELAS, LADO_RATO, NOTAS, YOUTUBE, Caca, Fase
+from alarma.caca import FECHAR, JANELAS, LADO_RATO, MUDO, NOTAS, YOUTUBE, Caca, Fase
 from alarma.logica import Alarme, Decisao, decidir
 from alarma.registro import Registro, caminho_padrao
 from alarma.som import tocar
@@ -30,6 +30,7 @@ LETRA_MS = 70
 QUADRO_MS = 50
 AREA_RESERVA = (0, 0, 1920, 1080)
 PEGO = "pego"
+MARCA_MUDO = "mudo-do-rato"
 
 _CSS = "window.mascote { background: transparent; }"
 
@@ -56,6 +57,7 @@ class Criatura(Gtk.Application):
         self._endereco: str | None = None
         self._area = AREA_RESERVA
         self._notas: Gtk.Window | None = None
+        self._marca_mudo = caminho_padrao().with_name(MARCA_MUDO)
 
     def _decidir(self) -> Decisao:
         agora = datetime.now().astimezone()
@@ -72,6 +74,8 @@ class Criatura(Gtk.Application):
             if not self._oculto:
                 self._janela.present()
             return
+
+        travessuras.restaurar_som(self._marca_mudo)
 
         css = Gtk.CssProvider()
         css.load_from_string(_CSS)
@@ -126,6 +130,7 @@ class Criatura(Gtk.Application):
 
     def _encerrar(self) -> None:
         self._caca = None
+        travessuras.restaurar_som(self._marca_mudo)
         if self._notas is not None:
             self._notas.destroy()
             self._notas = None
@@ -225,6 +230,10 @@ class Criatura(Gtk.Application):
             travessuras.abrir_youtube()
         elif travessura == JANELAS:
             travessuras.mexer_janelas(os.getpid(), self._acaso)
+        elif travessura == FECHAR:
+            travessuras.fechar_janela(os.getpid(), self._acaso)
+        elif travessura == MUDO:
+            travessuras.mutar(self._marca_mudo)
         return True
 
     def _abrir_notas(self) -> None:

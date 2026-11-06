@@ -8,9 +8,8 @@ from alarma.caca import (
     DUR_GAIOLA,
     FUGA_S,
     INTERVALO_TRAVESSURA,
-    JANELAS,
     LADO_RATO,
-    NOTAS,
+    TRAVESSURAS,
     VEL_FUGA,
     YOUTUBE,
     Caca,
@@ -18,6 +17,10 @@ from alarma.caca import (
 )
 
 AREA = (0, 0, 1920, 1080)
+
+
+def centro(caca: Caca) -> tuple[float, float]:
+    return caca.x + LADO_RATO / 2, caca.y + LADO_RATO / 2
 
 
 def solto() -> Caca:
@@ -51,13 +54,14 @@ class TestCaca(unittest.TestCase):
 
     def test_foge_do_cursor(self) -> None:
         caca = solto()
-        cursor = (round(caca.x) + 60, round(caca.y) + 48)
-        antes = math.dist((caca.x, caca.y), cursor)
+        x, y = centro(caca)
+        cursor = (round(x) - 60, round(y) - 48)
+        antes = math.dist(centro(caca), cursor)
         agora = DUR_GAIOLA
         for _ in range(8):
             agora += 0.1
             caca.passo(agora, cursor, AREA)
-        self.assertGreater(math.dist((caca.x, caca.y), cursor), max(antes, 200))
+        self.assertGreater(math.dist(centro(caca), cursor), max(antes, 200))
 
     def test_para_quando_cansa(self) -> None:
         caca = solto()
@@ -113,9 +117,10 @@ class TestCaca(unittest.TestCase):
     def test_sem_vai_e_volta_perseguido_ate_a_parede(self) -> None:
         def perseguidor(caca: Caca, agora: float) -> tuple[int, int]:
             angulo = agora * 1.3
+            x, y = centro(caca)
             return (
-                round(caca.x + 48 + math.cos(angulo) * 120),
-                round(caca.y + 48 + math.sin(angulo) * 120),
+                round(x + math.cos(angulo) * 120),
+                round(y + math.sin(angulo) * 120),
             )
 
         for semente in range(5):
@@ -140,11 +145,25 @@ class TestCaca(unittest.TestCase):
         caca = solto()
         agora = DUR_GAIOLA
         vistas = []
-        for _ in range(7):
+        for _ in range(300):
             agora += INTERVALO_TRAVESSURA
             vistas.append(caca.travessura(agora))
         self.assertEqual(vistas.count(YOUTUBE), 1)
-        self.assertEqual(vistas[:3], [NOTAS, YOUTUBE, JANELAS])
+
+    def test_sorteio_cobre_toda_a_lista_sem_ordem_fixa(self) -> None:
+        sequencias = set()
+        for semente in range(5):
+            caca = Caca(random.Random(semente), 0.0)
+            caca.passo(0.0, None, AREA)
+            caca.passo(DUR_GAIOLA, None, AREA)
+            agora = DUR_GAIOLA
+            vistas = []
+            for _ in range(300):
+                agora += INTERVALO_TRAVESSURA
+                vistas.append(caca.travessura(agora))
+            self.assertEqual(set(vistas), set(TRAVESSURAS))
+            sequencias.add(tuple(vistas[:10]))
+        self.assertGreater(len(sequencias), 1)
 
     def test_youtube_ja_feito_nao_repete(self) -> None:
         caca = Caca(random.Random(1), 0.0, youtube_feito=True)

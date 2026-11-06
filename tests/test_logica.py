@@ -26,14 +26,14 @@ class TestDecidir(unittest.TestCase):
         self.assertTrue(decisao.ativo)
 
     def test_ligou_entre_os_limiares(self) -> None:
-        decisao = decidir(True, instante(6, 12, 59, 59), instante(6, 12, 59, 59), fuso=TZ)
+        decisao = decidir(True, instante(6, 12, 48, 59), instante(6, 12, 48, 59), fuso=TZ)
         self.assertEqual(decisao.alarme, Alarme.MANHA)
 
-    def test_ligou_exatamente_1300(self) -> None:
-        decisao = decidir(True, instante(6, 13, 0), instante(6, 13, 0), fuso=TZ)
+    def test_ligou_exatamente_1249(self) -> None:
+        decisao = decidir(True, instante(6, 12, 49), instante(6, 12, 49), fuso=TZ)
         self.assertEqual(decisao.alarme, Alarme.TARDE)
 
-    def test_ligou_depois_das_1300_fica_so_na_tarde(self) -> None:
+    def test_ligou_depois_das_1249_fica_so_na_tarde(self) -> None:
         decisao = decidir(True, instante(6, 18, 5), instante(6, 18, 5), fuso=TZ)
         self.assertEqual(decisao.alarme, Alarme.TARDE)
 
@@ -43,7 +43,7 @@ class TestDecidir(unittest.TestCase):
 
     def test_limiares(self) -> None:
         self.assertEqual(LIMIAR_MANHA, time(6, 50))
-        self.assertEqual(LIMIAR_TARDE, time(13, 0))
+        self.assertEqual(LIMIAR_TARDE, time(12, 49))
 
 
 if __name__ == "__main__":
