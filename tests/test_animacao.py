@@ -18,6 +18,7 @@ from alarma.animacao import (
     Clipe,
     clipe_da_folha,
     depois_de_pego,
+    FALANDO,
     escolher,
 )
 from alarma.caca import DIRECOES, DUR_GAIOLA, Fase
@@ -38,6 +39,8 @@ class TestAnimacao(unittest.TestCase):
         self.assertEqual(escolher(Fase.SOLTO, False, False, None), CORRENDO)
         self.assertEqual(escolher(Fase.SOLTO, True, False, None), CANSADO)
         self.assertEqual(escolher(Fase.SOLTO, True, True, None), ACERTO)
+        self.assertEqual(escolher(Fase.SOLTO, False, False, None, True), FALANDO)
+        self.assertEqual(escolher(Fase.SOLTO, False, True, None, True), ACERTO)
 
     def test_some_um_tempo_depois_de_pego(self) -> None:
         self.assertEqual(depois_de_pego(0.5), PEGO)

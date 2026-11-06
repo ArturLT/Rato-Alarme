@@ -26,6 +26,17 @@ class TestRegistro(unittest.TestCase):
         registro.marcar("2026-11-06", "manha", "pego")
         self.assertTrue(registro.tem("2026-11-06", "manha", "pego"))
 
+    def test_limpar_apaga_so_aquele_alarme_e_persiste(self) -> None:
+        with tempfile.TemporaryDirectory() as pasta:
+            caminho = Path(pasta) / "registro.json"
+            registro = Registro(caminho)
+            registro.marcar("2026-11-06", "manha", "pego")
+            registro.marcar("2026-11-06", "tarde", "pego")
+            registro.limpar("2026-11-06", "tarde")
+            novo = Registro(caminho)
+            self.assertFalse(novo.tem("2026-11-06", "tarde", "pego"))
+            self.assertTrue(novo.tem("2026-11-06", "manha", "pego"))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -39,6 +39,13 @@ class Registro:
             k: v for k, v in self._dados.items() if k.startswith(f"{dia}/")
         }
         self._dados.setdefault(chave, []).append(evento)
+        self._gravar()
+
+    def limpar(self, dia: str, alarme: str) -> None:
+        if self._dados.pop(f"{dia}/{alarme}", None) is not None:
+            self._gravar()
+
+    def _gravar(self) -> None:
         if self._caminho is None:
             return
         self._caminho.parent.mkdir(parents=True, exist_ok=True)

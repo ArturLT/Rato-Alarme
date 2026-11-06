@@ -37,11 +37,12 @@ export function galope(fase) {
 
 /**
  * Desenha o rato. Z: { x, y, rot, sq, pes, cauda, olho, boca, cabeca: [dx, dy], orelha, fundo }.
- * olho: "aberto", "fechado", "x", "arregalado". boca: 0 fechada, 1 ofegante.
+ * olho: "aberto", "fechado", "x", "arregalado", "bravo". boca: 0 fechada, 1 ofegante.
+ * fala: quanto a boca abre ao falar, de 0 a 3 pixels.
  */
 export function rato(p, cor, Z = {}) {
   const { C, K } = cor, g = GRID;
-  const { x = 0, y = 0, rot = 0, sq = 0, pes = PARADO, olho = "aberto", boca = 0, cabeca = [0, 0], orelha = 0, fade = 1 } = Z;
+  const { x = 0, y = 0, rot = 0, sq = 0, pes = PARADO, olho = "aberto", boca = 0, cabeca = [0, 0], orelha = 0, fade = 1, fala = 0 } = Z;
   const pontos = Z.cauda ?? cauda();
   const cs = Math.cos(rot), sn = Math.sin(rot), sx = 1 - sq * 0.6, sy = 1 + sq;
   const hx = 8 + cabeca[0], hy = -9 + cabeca[1];
@@ -91,6 +92,7 @@ export function rato(p, cor, Z = {}) {
     g.set(ex + 1, ey + 1, C[0]);
     g.set(ex, ey + 1, C[0]);
   } else {
+    if (olho === "bravo") g.line(ex - 1, ey - 2, ex + 2, ey - 1, C[1]);
     g.set(ex, ey, C[0]); g.set(ex + 1, ey, C[0]); g.set(ex, ey + 1, C[0]); g.set(ex + 1, ey + 1, C[0]);
     g.set(ex, ey, C[6]);
   }
@@ -100,14 +102,26 @@ export function rato(p, cor, Z = {}) {
     g.set(nx - 3, ny + 3, K[0]); g.set(nx - 2, ny + 3, K[0]);
     g.set(nx - 3, ny + 4, K[2]); g.set(nx - 2, ny + 4, K[1]);
   }
+  if (fala > 0) {
+    // a mandíbula gira na bochecha: a boca é uma cunha que abre mais na ponta
+    const topo = ny + 2;
+    for (let k = -7; k <= -1; k++) {
+      const fundo = Math.ceil((fala * (k + 8)) / 7);
+      for (let j = 0; j < fundo; j++) g.set(nx + k, topo + j, j === fundo - 1 && fundo > 1 ? K[1] : K[0]);
+      g.set(nx + k, topo + fundo, C[3]);
+    }
+  } else if (Z.fala !== undefined) {
+    g.line(nx - 5, ny + 2, nx, ny + 2, C[1]);
+  }
   g.outline(C[0]);
   g.draw(p, fade, Math.round(x), Math.round(y));
   const X = Math.round(x), Y = Math.round(y), M = (q) => { const [a, b] = paraMundo(...q); return [X + a, Y + b]; };
   marcar("lado", M([hx - 0.5, hy - 4.6]), [X + ex, Y + ey], M([hx - 4, hy + 3.2]), fade);
   // bigodes por cima do contorno
-  const bx = Math.round(x) + nx - 2, by = Math.round(y) + ny + 1;
+  const bx = Math.round(x) + nx - 2, by = Math.round(y) + ny + (Z.fala === undefined ? 1 : -2);
   p.line(bx, by, bx + 5, by - 2, C[5], fade);
-  p.line(bx, by + 1, bx + 5, by + 2, C[5], fade);
+  p.line(bx, by + 1, bx + 5, by + (Z.fala === undefined ? 2 : 0), C[5], fade);
+  if (Z.fala !== undefined) p.line(bx + 2, by + 2, bx + 3, by + 2, K[1], fade);
 }
 
 const TOPO = (x) => -29 - 8 * Math.sqrt(Math.max(0, 1 - (x / 21) ** 2));

@@ -1,6 +1,9 @@
+import hashlib
 import io
 import json
+import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
 from alarma import atualizacao
@@ -18,7 +21,10 @@ def _release(tag: str = "v1.2.0", **extra: object) -> dict:
     return {
         "tag_name": tag,
         "html_url": PAGINA,
-        "assets": [{"name": n, "browser_download_url": f"https://d/{n}"} for n in nomes],
+        "assets": [
+            {"name": n, "browser_download_url": f"https://d/{n}", "digest": f"sha256:{n}"}
+            for n in nomes
+        ],
         **extra,
     }
 
@@ -46,6 +52,7 @@ class TestInterpretar(unittest.TestCase):
         for sistema, maquina, nome in casos:
             achado = interpretar(_release(), "1.0.0", sistema, maquina)
             self.assertEqual(achado.download, f"https://d/{nome}")
+            self.assertEqual(achado.resumo, f"sha256:{nome}")
             self.assertEqual(achado.versao, "1.2.0")
 
     def test_linux_nao_tem_instalador(self) -> None:
@@ -84,3 +91,44 @@ class TestBuscar(unittest.TestCase):
         self.assertEqual(achado.versao, "99.0.0")
         pedido = abrir.call_args.args[0]
         self.assertTrue(pedido.get_header("User-agent").startswith("Rato-Alarme/"))
+
+
+class _Resposta(io.BytesIO):
+    def __init__(self, conteudo: bytes) -> None:
+        super().__init__(conteudo)
+        self.headers = {"Content-Length": str(len(conteudo))}
+
+
+class TestBaixar(unittest.TestCase):
+    CONTEUDO = b"instalador" * 1000
+
+    def setUp(self) -> None:
+        pasta = tempfile.TemporaryDirectory()
+        self.addCleanup(pasta.cleanup)
+        self.destino = Path(pasta.name) / "sub" / "i.exe"
+
+    def _baixar(self, resumo: str | None, conteudo: bytes | None = None) -> list[int]:
+        lancamento = atualizacao.Lancamento("1.2.0", "https://p", "https://d/i.exe", resumo)
+        passos: list[int] = []
+        resposta = _Resposta(self.CONTEUDO if conteudo is None else conteudo)
+        with mock.patch("urllib.request.urlopen", return_value=resposta):
+            atualizacao.baixar(lancamento, self.destino, passos.append)
+        return passos
+
+    def _resumo(self) -> str:
+        return "sha256:" + hashlib.sha256(self.CONTEUDO).hexdigest()
+
+    def test_arquivo_conferido_fica_no_destino(self) -> None:
+        passos = self._baixar(self._resumo())
+        self.assertEqual(self.destino.read_bytes(), self.CONTEUDO)
+        self.assertEqual(passos[-1], 100)
+
+    def test_arquivo_diferente_do_publicado_e_apagado(self) -> None:
+        with self.assertRaises(ValueError):
+            self._baixar(self._resumo(), b"adulterado")
+        self.assertEqual(list(self.destino.parent.iterdir()), [])
+
+    def test_sem_resumo_nem_tenta_baixar(self) -> None:
+        with self.assertRaises(ValueError):
+            self._baixar(None)
+        self.assertFalse(self.destino.exists())

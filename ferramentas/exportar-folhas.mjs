@@ -25,7 +25,7 @@ const { ITENS } = await import(join(PIXELFX, "src", "fx", "critters", "_itens.js
 const { encodePNG } = await import(join(PIXELFX, "tools", "lib", "png.mjs"));
 
 const ALARME = ["acerto", "cansado", "correndo", "correndo-baixo", "correndo-baixo-lado", "correndo-cima", "correndo-cima-lado",
-  "dormindo", "fuga", "pego", "sumindo"];
+  "dormindo", "fuga", "pego", "reclamando", "sumindo"];
 const PET = ["sentado", "falando", "placa", "acenando", "comendo", "feliz", "cochilando", "andando", "puxando", "surgindo",
   "triste", "morto", "pendurado"];
 const FOLHAS = [

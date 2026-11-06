@@ -4,9 +4,10 @@
 - 06:50 até 12:48 → manhã
 - antes das 06:50 → nenhum
 
-O rato só aparece até TOLERANCIA_MIN depois do horário. A folga existe porque o
-computador costuma ligar logo depois da entrada. Depois disso, ativar o programa
-não solta o rato, mas uma caçada já iniciada continua até ele ser pego.
+O rato da manhã vale até a saída, porque a pessoa pode chegar atrasada. O da tarde
+vale até TOLERANCIA_MIN depois da saída, para quem religa o computador nesse
+intervalo. Depois disso, ativar o programa não solta o rato, mas uma caçada já
+iniciada continua até ele ser pego.
 """
 
 from dataclasses import dataclass
@@ -46,12 +47,10 @@ def decidir(
 ) -> Decisao:
     hora = agora.time()
     if hora >= saida:
-        alarme, limiar = Alarme.TARDE, saida
-    elif hora >= entrada:
-        alarme, limiar = Alarme.MANHA, entrada
-    else:
-        return Decisao(Alarme.NENHUM, False, agora)
-    return Decisao(alarme, _minutos(hora) - _minutos(limiar) < TOLERANCIA_MIN, agora)
+        return Decisao(Alarme.TARDE, _minutos(hora) - _minutos(saida) < TOLERANCIA_MIN, agora)
+    if hora >= entrada:
+        return Decisao(Alarme.MANHA, True, agora)
+    return Decisao(Alarme.NENHUM, False, agora)
 
 
 def pendente(decisao: Decisao, alarme_ligado: bool, pego: bool, disparado: bool) -> bool:
