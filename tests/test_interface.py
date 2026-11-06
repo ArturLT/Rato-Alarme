@@ -22,6 +22,7 @@ from alarma.criatura import Criatura
 from alarma.janela import JanelaHyprland, JanelaQt, nova
 from alarma.logica import Alarme, Decisao
 from alarma.painel import Painel
+from alarma.registro import PEGO
 from alarma.unico import Instancia
 
 app = QApplication.instance() or QApplication([])
@@ -153,6 +154,28 @@ class TestCriatura(Base):
         self._no_relogio(criatura, Alarme.TARDE, False)
         self.assertIs(criatura._caca, caca)
         self.assertTrue(criatura._janela.isVisible())
+
+    def _muda_saida(self, antes: time, depois: time) -> Criatura:
+        """Às 09:00, com o rato da tarde já pego, troca a saída."""
+        criatura = self._criatura(solto=False)
+        criatura._config = config.Config(entrada=time(6, 0), saida=antes)
+        criatura._registro.marcar(_agora().date().isoformat(), Alarme.TARDE, PEGO)
+        novo = config.Config(entrada=time(6, 0), saida=depois)
+        with mock.patch.object(Criatura, "_ler_config", return_value=novo):
+            self._no_relogio(criatura, Alarme.MANHA, True)
+        return criatura
+
+    def _tarde_pega(self, criatura: Criatura) -> bool:
+        return criatura._registro.tem(_agora().date().isoformat(), Alarme.TARDE, PEGO)
+
+    def test_saida_adiada_reabre_o_alarme_da_tarde(self) -> None:
+        self.assertFalse(self._tarde_pega(self._muda_saida(time(8, 30), time(12, 0))))
+
+    def test_horario_ja_passado_nao_reabre(self) -> None:
+        self.assertTrue(self._tarde_pega(self._muda_saida(time(8, 30), time(8, 45))))
+
+    def test_sem_mudanca_de_horario_nao_reabre(self) -> None:
+        self.assertTrue(self._tarde_pega(self._muda_saida(time(12, 0), time(12, 0))))
 
     def test_sem_hyprland_nao_mexe_em_janelas_alheias(self) -> None:
         criatura = self._criatura(solto=False)

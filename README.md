@@ -50,6 +50,8 @@ Enquanto está solto, ele pode:
 
 Se você se atrasar, o rato da entrada aparece assim que o programa iniciar, a qualquer momento antes da saída. O rato da saída aparece se o computador ligar até 1 hora depois do horário. Depois disso, ele espera o dia seguinte.
 
+Se você mudar um horário para mais tarde no painel, o rato aparece no horário novo, mesmo que já tenha sido pego naquele dia.
+
 No Linux com Hyprland, ele também mexe e fecha janelas de outros programas. Isso não existe no Windows e no macOS.
 
 ## Menu do ícone

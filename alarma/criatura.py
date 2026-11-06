@@ -143,8 +143,10 @@ class Criatura(QObject):
             self._relogios.append(relogio)
 
     def _sincronizar(self) -> None:
+        antes = self._config
         self._config = self._ler_config()
         self.decisao = self._decidir()
+        self._reabrir(antes)
         alarme = self.decisao.alarme
         pego = self._registro.tem(self._dia, alarme, PEGO)
         disparado = self._registro.tem(self._dia, alarme, DISPARADO)
@@ -161,6 +163,16 @@ class Criatura(QObject):
             self._capturado_em = None
         if not solto and not self._oculto and self._capturado_em is None:
             self._esconder()
+
+    def _reabrir(self, antes: config.Config) -> None:
+        """Horário mudado para mais tarde hoje vale de novo, mesmo com o rato já pego."""
+        hora = self.decisao.agora.time()
+        for alarme, velho, novo in (
+            (Alarme.MANHA, antes.entrada, self._config.entrada),
+            (Alarme.TARDE, antes.saida, self._config.saida),
+        ):
+            if novo != velho and hora < novo:
+                self._registro.limpar(self._dia, alarme)
 
     def _encerrar(self) -> None:
         self._caca = None
