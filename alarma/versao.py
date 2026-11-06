@@ -1,3 +1,3 @@
 """Versão do programa. O lançamento só sai se a tag for igual a este número."""
 
-VERSAO = "1.0.0"
+VERSAO = "2.0.0"
