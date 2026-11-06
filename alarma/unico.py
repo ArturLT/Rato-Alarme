@@ -1,49 +1,51 @@
-"""Garante um rato só. Abrir o programa de novo pede o painel ao que já está rodando."""
+"""Garante um rato só. Abrir o programa de novo pede o painel ao que já está rodando.
 
-import getpass
+Usa arquivos, como o resto do programa: a trava some sozinha se o processo morrer,
+e a marca funciona igual nos três sistemas.
+"""
 
-from PySide6.QtCore import QObject, Signal
-from PySide6.QtNetwork import QLocalServer, QLocalSocket
+from pathlib import Path
 
-ESPERA_MS = 500
+from PySide6.QtCore import QLockFile, QObject, QTimer, Signal
 
+from alarma.caminhos import pasta_estado
 
-def nome_padrao() -> str:
-    return f"alarma-meme-{getpass.getuser()}"
+OLHAR_MS = 300
 
 
 class Instancia(QObject):
     pedido = Signal()
 
-    def __init__(self, nome: str | None = None) -> None:
+    def __init__(self, pasta: Path | None = None) -> None:
         super().__init__()
-        self._nome = nome or nome_padrao()
-        self._servidor: QLocalServer | None = None
+        pasta = pasta or pasta_estado()
+        pasta.mkdir(parents=True, exist_ok=True)
+        self._trava = QLockFile(str(pasta / "rodando.lock"))
+        self._trava.setStaleLockTime(0)  # só vale como abandonada se o processo morreu
+        self._marca = pasta / "abrir-painel"
+        self._relogio = QTimer(self, interval=OLHAR_MS)
+        self._relogio.timeout.connect(self._olhar)
 
     def assumir(self, avisar: bool) -> bool:
         """True se esta é a primeira. Senão, avisa a primeira quando `avisar`."""
-        outra = QLocalSocket()
-        outra.connectToServer(self._nome)
-        if outra.waitForConnected(ESPERA_MS):
+        if not self._trava.tryLock(0):
             if avisar:
-                outra.write(b"painel\n")
-                outra.waitForBytesWritten(ESPERA_MS)
-                outra.waitForDisconnected(ESPERA_MS)  # a primeira fecha quando recebe
-            outra.disconnectFromServer()
+                try:
+                    self._marca.touch()
+                except OSError:
+                    pass
             return False
-        QLocalServer.removeServer(self._nome)
-        self._servidor = QLocalServer(self)
-        self._servidor.newConnection.connect(self._nova_conexao)
-        self._servidor.listen(self._nome)
+        self._apagar_marca()
+        self._relogio.start()
         return True
 
-    def _nova_conexao(self) -> None:
-        conexao = self._servidor.nextPendingConnection()
-        conexao.readyRead.connect(lambda: self._mensagem(conexao))
-        conexao.disconnected.connect(conexao.deleteLater)
-        self._mensagem(conexao)  # a mensagem pode ter chegado antes do sinal ser ligado
+    def _apagar_marca(self) -> bool:
+        try:
+            self._marca.unlink()
+        except OSError:
+            return False
+        return True
 
-    def _mensagem(self, conexao: QLocalSocket) -> None:
-        if bytes(conexao.readAll()):
-            conexao.disconnectFromServer()
+    def _olhar(self) -> None:
+        if self._apagar_marca():
             self.pedido.emit()

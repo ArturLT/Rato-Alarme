@@ -20,7 +20,7 @@ fi
 # As dependências ficam em .venv, sem tocar no Python do sistema.
 [ -x "$PYTHON" ] || python3 -m venv "$PASTA/.venv"
 "$PYTHON" -m pip install --quiet --disable-pip-version-check -r "$PASTA/requirements.txt"
-"$PYTHON" -c "from PySide6 import QtWidgets, QtNetwork"
+"$PYTHON" -c "from PySide6 import QtWidgets"
 
 # Versões antigas tinham um serviço só para a bandeja. Hoje é um processo só.
 if [ -e "$UNIDADES/alarma-meme-bandeja.service" ]; then

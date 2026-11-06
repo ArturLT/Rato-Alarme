@@ -178,13 +178,21 @@ class TestJanela(Base):
 
 
 class TestInstanciaUnica(Base):
+    def _primeira(self) -> list[int]:
+        self.primeira = Instancia(self.pasta)
+        self.assertTrue(self.primeira.assumir(avisar=True))
+        self.addCleanup(self._soltar)
+        pedidos: list[int] = []
+        self.primeira.pedido.connect(lambda: pedidos.append(1))
+        return pedidos
+
+    def _soltar(self) -> None:
+        self.primeira._relogio.stop()
+        self.primeira._trava.unlock()
+
     def test_segunda_abertura_pede_o_painel_a_primeira(self) -> None:
-        nome = f"alarma-teste-{os.getpid()}"
-        primeira = Instancia(nome)
-        self.assertTrue(primeira.assumir(avisar=True))
-        pedidos = []
-        primeira.pedido.connect(lambda: pedidos.append(1))
-        self.assertFalse(Instancia(nome).assumir(avisar=True))
+        pedidos = self._primeira()
+        self.assertFalse(Instancia(self.pasta).assumir(avisar=True))
         for _ in range(150):
             QTest.qWait(20)
             if pedidos:
@@ -192,13 +200,15 @@ class TestInstanciaUnica(Base):
         self.assertEqual(pedidos, [1])
 
     def test_boot_repetido_nao_abre_o_painel(self) -> None:
-        nome = f"alarma-teste-boot-{os.getpid()}"
-        primeira = Instancia(nome)
-        primeira.assumir(avisar=True)
-        pedidos = []
-        primeira.pedido.connect(lambda: pedidos.append(1))
-        self.assertFalse(Instancia(nome).assumir(avisar=False))
-        QTest.qWait(200)
+        pedidos = self._primeira()
+        self.assertFalse(Instancia(self.pasta).assumir(avisar=False))
+        QTest.qWait(500)
+        self.assertEqual(pedidos, [])
+
+    def test_pedido_antigo_nao_abre_o_painel_no_proximo_boot(self) -> None:
+        (self.pasta / "abrir-painel").touch()
+        pedidos = self._primeira()
+        QTest.qWait(500)
         self.assertEqual(pedidos, [])
 
 
